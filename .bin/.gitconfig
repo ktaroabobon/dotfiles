@@ -1,0 +1,12 @@
+[user]
+    name = ktaroabobon
+    email = ktaroabobon@gmail.com
+
+[color]
+    ui = auto
+
+[core]
+    autoclrf = input
+
+[init]
+    defaultBranch = main
