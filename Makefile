@@ -4,7 +4,7 @@ help:
 
 .PHONY: all
 all:
-	$(MAKE) all
+	$(MAKE) init
 
 .PHONY: init
 init:
