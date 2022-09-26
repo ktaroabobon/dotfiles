@@ -90,3 +90,6 @@ for app in "Dock" \
   "SystemUIServer"; do
   killall "${app}" &>/dev/null 2>&1
 done
+
+echo "End defaults.sh"
+echo "----------------------------------------"
