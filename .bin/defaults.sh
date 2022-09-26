@@ -13,7 +13,7 @@ fi
 #
 #====================================================================================================
 
-# Disable auto-capitalization
+echo "Disable auto-capitalization"
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
 #====================================================================================================
@@ -22,14 +22,20 @@ defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 #
 #====================================================================================================
 
-# Disable animation at application launch
+echo "Disable animation at application launch"
 defaults write com.apple.dock launchanim -bool false
 
-# Disable show recent applications
+echo "Disable show recent applications"
 defaults write com.apple.dock show-recents -bool false
 
-# Delete all icons in the Dock
+echo "Delete all icons in the Dock"
 defaults write com.apple.dock persistent-apps -array
+
+#====================================================================================================
+#
+# TrackPad, Mouse, Keyboard
+#
+#====================================================================================================
 
 #====================================================================================================
 #
@@ -37,7 +43,7 @@ defaults write com.apple.dock persistent-apps -array
 #
 #====================================================================================================
 
-# Save screenshots to the pictures directory
+echo "Save screenshots to the pictures directory"
 defaults write com.apple.screencapture location -string "${HOME}/Pictures"
 
 #====================================================================================================
@@ -46,19 +52,19 @@ defaults write com.apple.screencapture location -string "${HOME}/Pictures"
 #
 #====================================================================================================
 
-# Disable animation
+echo "Disable animation"
 defaults write com.apple.finder DisableAllAnimations -bool true
 
-# Show hidden files
+echo "Show hidden files"
 defaults write com.apple.finder AppleShowAllFiles -bool true
 
-# Show file with all extensions
+echo "Show file with all extensions"
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
-# Disable the status bar
+echo "Disable the status bar"
 defaults write com.apple.finder ShowStatusBar -bool false
 
-# Disable the path bar
+echo "Disable the path bar"
 defaults write com.apple.finder ShowPathbar -bool false
 
 #====================================================================================================
@@ -67,7 +73,7 @@ defaults write com.apple.finder ShowPathbar -bool false
 #
 #====================================================================================================
 
-# Hide all icons on the desktop
+echo "Hide all icons on the desktop"
 defaults write com.apple.finder CreateDesktop -bool false
 
 #====================================================================================================
@@ -76,7 +82,7 @@ defaults write com.apple.finder CreateDesktop -bool false
 #
 #====================================================================================================
 
-# Set menu bar clock format
+echo "Set menu bar clock format"
 defaults write com.apple.menuextra.clock DateFormat -string "EEE d MMM HH:mm:ss"
 
 for app in "Dock" \
