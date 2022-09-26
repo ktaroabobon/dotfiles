@@ -13,3 +13,6 @@ sudo chown -R g+w /usr/local/*
 
 # Run .Brewfile
 brew bundle --global
+
+echo "End brew.sh"
+echo "----------------------------------------"

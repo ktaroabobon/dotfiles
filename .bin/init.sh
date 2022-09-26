@@ -13,3 +13,6 @@ xcode-select --install >/dev/null 2>&1
 
 # Install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+echo "End init.sh"
+echo "----------------------------------------"
