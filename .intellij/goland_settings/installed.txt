@@ -1,0 +1,9 @@
+PythonCore
+com.github.copilot
+com.intellij.ja
+com.intellij.kubernetes
+com.samuraism.plugins.mito
+intellij.prettierJS
+mobi.hsz.idea.gitignore
+org.zalando.intellij.swagger
+ru.adelf.idea.dotenv

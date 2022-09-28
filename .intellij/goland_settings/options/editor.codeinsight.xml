@@ -1,0 +1,5 @@
+<application>
+  <component name="Go">
+    <option name="renameCorrespondingTestOrProductionFile" value="YES" />
+  </component>
+</application>

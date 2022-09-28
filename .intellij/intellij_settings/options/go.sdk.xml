@@ -1,0 +1,9 @@
+<application>
+  <component name="GoSdkList">
+    <sdk-url>
+      <set>
+        <option value="file:///opt/homebrew/Cellar/go/1.18.3/libexec" />
+      </set>
+    </sdk-url>
+  </component>
+</application>

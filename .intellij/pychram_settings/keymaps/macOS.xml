@@ -1,0 +1,25 @@
+<keymap version="1" name="macOS コピー" parent="Mac OS X 10.5+">
+  <action id="CloseAllEditors">
+    <keyboard-shortcut first-keystroke="meta alt w" />
+  </action>
+  <action id="CloseAllEditorsButActive">
+    <keyboard-shortcut first-keystroke="shift meta w" />
+  </action>
+  <action id="ExecuteInPyConsoleAction">
+    <keyboard-shortcut first-keystroke="shift ctrl e" />
+  </action>
+  <action id="MoveLineDown">
+    <keyboard-shortcut first-keystroke="shift alt d" />
+  </action>
+  <action id="MoveLineUp">
+    <keyboard-shortcut first-keystroke="shift alt e" />
+  </action>
+  <action id="ReformatCode">
+    <keyboard-shortcut first-keystroke="meta alt s" />
+  </action>
+  <action id="ShowReformatFileDialog">
+    <keyboard-shortcut first-keystroke="shift meta alt s" />
+  </action>
+  <action id="XDebugger.MoveWatchDown" />
+  <action id="hg4idea.QFold" />
+</keymap>

@@ -1,0 +1,12 @@
+<application>
+  <component name="FindSettings">
+    <option name="customScope" value="すべての場所" />
+    <option name="defaultScopeName" value="すべての場所" />
+    <option name="SEARCH_SCOPE" value="すべての場所" />
+    <mask>*.css</mask>
+    <mask>*.html</mask>
+    <mask>*.xml</mask>
+    <mask>*.pyw</mask>
+    <mask>*.py</mask>
+  </component>
+</application>

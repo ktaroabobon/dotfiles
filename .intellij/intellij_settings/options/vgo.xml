@@ -1,0 +1,15 @@
+<application>
+  <component name="vgo">
+    <environment>
+      <map>
+        <entry key="GOPROXY">
+          <value>
+            <list>
+              <option value="direct" />
+            </list>
+          </value>
+        </entry>
+      </map>
+    </environment>
+  </component>
+</application>

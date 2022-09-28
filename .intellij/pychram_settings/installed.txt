@@ -1,0 +1,5 @@
+com.github.copilot
+com.intellij.ja
+mobi.hsz.idea.gitignore
+name.kropp.intellij.makefile
+ru.adelf.idea.dotenv

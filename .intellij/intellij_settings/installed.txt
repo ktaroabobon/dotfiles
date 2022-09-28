@@ -1,0 +1,10 @@
+Pythonid
+com.github.copilot
+com.intellij.ja
+com.intellij.kubernetes
+com.samuraism.plugins.mito
+intellij.prettierJS
+mobi.hsz.idea.gitignore
+name.kropp.intellij.makefile
+org.jetbrains.plugins.go
+ru.adelf.idea.dotenv
