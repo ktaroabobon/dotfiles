@@ -14,5 +14,8 @@ xcode-select --install >/dev/null 2>&1
 # Install Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
+# Add path
+export PATH=opt/homebrew/bin;$PATH
+
 echo "End init.sh"
 echo "----------------------------------------"
