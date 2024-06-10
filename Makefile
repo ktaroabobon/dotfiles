@@ -36,15 +36,15 @@ init:
 
 .PHONY: brew
 brew:
-	.bin/brew.sh
+	.bin/darwin/brew.sh
 
 .PHONY: link
 link:
-	.bin/link.sh
+	.bin/darwin/link.sh
 
 .PHONY: defaults
 defaults:
-	.bin/defaults.sh
+	.bin/darwin/defaults.sh
 
 # ------------------------------------------------------------------------------
 # Test environment related commands and comments
