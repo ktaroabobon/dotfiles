@@ -6,18 +6,29 @@ This repository contains my dotfiles.
 
 ## Requirements
 
-- macOS version 11.0 or later
+- MacOS version 11.0 or later
+- Ubuntu version 22.04
 
 ## Installation
 
 Download this repository:
 
 ```sh
-$ cd ~ && git clone https://github.com/ktaroabobon/dotfiles.git
+cd ~ && git clone https://github.com/ktaroabobon/dotfiles.git
 ```
 
-Set up for macOS:
+### MacOS
+Set up for MacOS:
 
 ```sh
-$ cd ~/dotfiles && make all
+cd dotfiles 
+make all
+```
+
+### Ubuntu
+Set up for Ubuntu:
+
+```sh
+cd dofiles
+.bin/init.sh
 ```

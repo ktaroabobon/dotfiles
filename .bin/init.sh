@@ -13,29 +13,40 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
   # Add Homebrew path
   export PATH=/opt/homebrew/bin:$PATH
+
+  # Install vi using Homebrew
+  echo "Install vi"
+  brew install vim
 fi
+
 # Check if Ubuntu
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   # Update and upgrade
   echo "Update and upgrade"
   sudo apt update
-  sudo apt upgrade
-  sudo apt autoremove --purge
+  sudo apt upgrade -y
+  sudo apt autoremove --purge -y
 
   # Install essential packages
   echo "Install essential packages"
   sudo apt-get install -y build-essential
   # Add additional commands for Ubuntu here
 
-  # Install zsh, git, curl
-  echo "Install zsh, git, curl"
+  # Install zsh, git, curl, make, make-guile, and vi
+  echo "Install zsh, git, curl, make, make-guile, and vi"
   sudo apt -y install zsh powerline fonts-powerline
   sudo apt -y install git
   sudo apt -y install curl
+  sudo apt -y install make
+  sudo apt -y install make-guile
+  sudo apt -y install vim
+  sudo apt-get install -y language-pack-en
+  sudo update-locale
 
   # Default shell to zsh
   echo "Default shell to zsh"
-  chsh -s $(which zsh)
+  sudo chsh -s $(which zsh)
+  echo 'export SHELL=$(which zsh)' >> ${HOME}/.zshrc
 
   # Set up git
   echo "Set up git"
@@ -48,10 +59,19 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   # Change oh-my-zsh theme to Agnoster
   echo "Change oh-my-zsh theme to Agnoster"
-  sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="agnoster"/g' ~/.zshrc
+  zshrc_file="${HOME}/.zshrc"
+  theme_line='ZSH_THEME="agnoster"'
+  
+  if grep -q "^ZSH_THEME=" "$zshrc_file"; then
+    # Replace existing ZSH_THEME line
+    awk -v theme_line="$theme_line" '{sub(/^ZSH_THEME=.*$/, theme_line)}1' "$zshrc_file" > "${zshrc_file}.tmp" && mv "${zshrc_file}.tmp" "$zshrc_file"
+  else
+    # Add new ZSH_THEME line
+    echo "$theme_line" >> "$zshrc_file"
+  fi
 
-  # Restart the terminal
-  echo "Restarting terminal..."
+
+  # Restart the shell
   exec zsh
 fi
 

@@ -1,0 +1,16 @@
+FROM ubuntu:22.04
+
+# パッケージリストを更新し、sudoをインストール（キャッシュ活用）
+RUN apt-get update && apt-get install -y sudo
+
+# ユーザーの追加とsudoグループへの追加
+RUN useradd -m docker && echo "docker:pass" | chpasswd && adduser docker sudo
+
+# 作業ディレクトリを設定
+WORKDIR /app
+
+# 必要なファイルやディレクトリをコピー
+COPY . /app/
+
+# ユーザーの切り替え
+USER docker
