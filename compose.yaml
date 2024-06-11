@@ -1,0 +1,9 @@
+services:
+  ubuntu:
+    container_name: ubuntu_2204_container
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.ubuntu2204
+    tty: true
+    volumes:
+      - .:/app
