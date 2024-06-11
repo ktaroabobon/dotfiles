@@ -2,6 +2,13 @@
 
 echo "Start default.sh"
 
+# gsettingsコマンドが利用可能か確認し、インストールする
+if ! command -v gsettings &> /dev/null
+then
+    echo "gsettingsが見つかりません。インストールします..."
+    sudo apt install -y gnome-session-bin
+fi
+
 # ディレクトリ名を英語に変更
 echo "ディレクトリ名を英語に変更"
 LANG=C xdg-user-dirs-update --force
@@ -21,7 +28,7 @@ gsettings set org.gnome.shell.extensions.desktop-icons icon-placement 'top-right
 
 # 必要なツールをインストール
 echo "必要なツールをインストール"
-sudo apt install -y chrome-gnome-shell gnome-tweak wmctrl
+sudo apt install -y chrome-gnome-shell git gnome-tweaks wmctrl
 
 # GNOMEターミナルの設定を変更
 echo "GNOMEターミナルの設定を変更"
@@ -29,16 +36,24 @@ gsettings set org.gnome.Terminal.Legacy.Settings headerbar false
 
 # MacOS Big Sur風テーマのインストール
 echo "MacOS Big Sur風テーマのインストール"
+if [ -d "WhiteSur-gtk-theme" ]; then
+    rm -rf WhiteSur-gtk-theme
+fi
 git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git
 cd WhiteSur-gtk-theme
 ./install.sh --opacity solid --alt normal --theme blue --icon ubuntu --nautilus-style mojave --panel-size smaller
-sudo ./tweaks.sh --gdm default --opacity solid --color dark --theme blue --icon ubuntu
+if command -v gdm &> /dev/null; then
+    sudo ./tweaks.sh --gdm default --opacity solid --theme blue --icon ubuntu
+fi
 ./tweaks.sh --firefox
-./tweaks.sh --dash-to-dock --color dark
+./tweaks.sh --dash-to-dock
 cd ..
 
 # MacOS Big Sur風アイコンのインストール
 echo "MacOS Big Sur風アイコンのインストール"
+if [ -d "WhiteSur-icon-theme" ]; then
+    rm -rf WhiteSur-icon-theme
+fi
 git clone https://github.com/vinceliuice/WhiteSur-icon-theme.git
 cd WhiteSur-icon-theme
 ./install.sh --theme default --bold
@@ -57,10 +72,6 @@ cd ~
 echo "Ulauncherのインストール"
 sudo add-apt-repository ppa:agornostal/ulauncher
 sudo apt install -y ulauncher
-
-# gsettingsのインストール
-echo "gsettingsのインストール"
-sudo apt-get install libglib2.0-bin
 
 # キーボードショートカットの設定
 echo "キーボードショートカットの設定"
@@ -97,7 +108,7 @@ gsettings set org.gnome.desktop.wm.preferences focus-mode 'mouse'
 gsettings set org.gnome.desktop.wm.preferences button-layout 'close,minimize,maximize:'
 gsettings set org.gnome.desktop.interface gtk-theme 'WhiteSur-dark-solid'
 gsettings set org.gnome.desktop.interface icon-theme 'WhiteSur-dark'
-gsettings set org.gnome.shell.extensions.user-theme name 'WhiteSur-dark-solid'
+gsettings set org.gnome.shell.extensions.user-theme name 'WhiteSur-dark-solid' --schemadir ~/.themes/WhiteSur-dark-solid/gnome-shell
 
 # 日本語入力環境の設定
 echo "日本語入力環境の設定"

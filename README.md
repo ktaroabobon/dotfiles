@@ -32,3 +32,5 @@ Set up for Ubuntu:
 cd dofiles
 .bin/init.sh
 ```
+
+Nest step is [here](.bin/ubuntu/README.md)
