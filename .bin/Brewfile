@@ -20,7 +20,7 @@ brew "the_silver_searcher"
 brew "tree"
 brew "wget"
 brew "yarn"
-brew "python3"
+brew "pyenv"
 
 cask "aws-vault"
 cask "docker"
@@ -32,6 +32,7 @@ cask "firefox"
 cask "zoom"
 cask "displaylink"
 cask "logitech-options"
+cask "raycast"
 
 mas "Microsoft Excel", id: 462054704
 mas "Microsoft Word", id: 462058435
