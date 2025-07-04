@@ -21,7 +21,7 @@ jobs:
       run: |
         which brew
         brew --version
-        brew bundle check --global || echo "Some packages may be missing"
+        brew bundle check --file=".bin/darwin/Brewfile" || echo "Some packages may be missing"
 
     - name: Run init script
       run: make init
