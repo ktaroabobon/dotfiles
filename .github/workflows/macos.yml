@@ -17,14 +17,30 @@ jobs:
     - name: Run brew setup
       run: make brew
 
+    - name: Check brew installation
+      run: |
+        which brew
+        brew --version
+        brew bundle check --global || echo "Some packages may be missing"
+
     - name: Run init script
       run: make init
 
     - name: Run link setup
       run: make link
 
+    - name: Check symlinks created
+      run: |
+        ls -la ~/.zshrc ~/.zprofile ~/.gitconfig || echo "Some dotfiles may be missing"
+
     - name: Run defaults setup
       run: make defaults
+
+    - name: Check if key commands are available
+      run: |
+        which git && echo "✅ git available"
+        which tree && echo "✅ tree available" || echo "⚠️ tree not available"
+        which wget && echo "✅ wget available" || echo "⚠️ wget not available"
 
     - name: Load .bash_profile
       run: |
