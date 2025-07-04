@@ -1,0 +1,37 @@
+name: macOS
+
+on:
+  push:
+    branches: [ master, add-build-macos ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  macos-test:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Error Check
+    - name: Run brew setup
+      run: make brew
+
+    - name: Run init script
+      run: make init
+
+    - name: Run link setup
+      run: make link
+
+    - name: Run defaults setup
+      run: make defaults
+
+    - name: Load .bash_profile
+      run: |
+        bash ~/.bash_profile 2> error.log; cat error.log
+        if [ -s error.log ]; then false; fi
+
+    - name: Load .bashrc
+      run: |
+        bash ~/.bashrc 2> error.log; cat error.log
+        if [ -s error.log ]; then false; fi 
