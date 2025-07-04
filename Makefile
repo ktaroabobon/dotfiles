@@ -29,6 +29,7 @@ all:
 	$(MAKE) init
 	$(MAKE) brew
 	$(MAKE) link
+	$(MAKE) defaults
 
 .PHONY: init
 init:
