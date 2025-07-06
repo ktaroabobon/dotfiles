@@ -1,45 +1,29 @@
 cask_args appdir: '/Applications'
 
-
-tap "homebrew/bundle"
-tap "homebrew/cask"
-tap "homebrew/core"
-
-brew "awscli"
-brew "glib"
-brew "gnutls"
-brew "harfbuzz"
-brew "gobject-introspection"
-brew "ffmpeg"
+brew "zsh"
+brew "mise"
 brew "git"
-brew "go"
 brew "n"
-brew "nodebrew"
-brew "sl"
-brew "the_silver_searcher"
 brew "tree"
 brew "wget"
-brew "yarn"
-brew "python3"
+brew "ffmpeg"
 
-cask "aws-vault"
-cask "docker"
-cask "jetbrains-toolbox"
-cask "visual-studio-code"
-cask "postman"
-cask "google-chrome"
-cask "firefox"
-cask "zoom"
-cask "displaylink"
-cask "logitech-options"
+# Cask は使わない
+# 入れたいアプリのメモ
 
-mas "Microsoft Excel", id: 462054704
-mas "Microsoft Word", id: 462058435
-mas "Microsoft PowerPoint", id: 462062816
-mas "Discord", id: 985746746
-mas "Slack", id: 803453959
-mas "Enpass", id: 1444383602
-mas "Google Sheets", id: 842849113
-mas "Google Docs", id: 842849113
-mas "Google Slides", id: 842849113
-mas "Google Drive", id: 507874739
+# docker desktop
+# VSCode
+# Cursor
+# Arc
+# Logitech Options
+# DisplayLink
+# Zoom
+# Google Chrome
+# Discord
+# Slack
+# Microsoft Teams
+# Raycast
+# Notion
+# iTerm2
+# Line
+# WeChat

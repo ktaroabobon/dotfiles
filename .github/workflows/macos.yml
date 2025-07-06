@@ -1,0 +1,53 @@
+name: macOS
+
+on:
+  push:
+    branches: [ master, add-build-macos ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  macos-test:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Error Check
+    - name: Run brew setup
+      run: make brew
+
+    - name: Check brew installation
+      run: |
+        which brew
+        brew --version
+        brew bundle check --file=".bin/darwin/Brewfile" || echo "Some packages may be missing"
+
+    - name: Run init script
+      run: make init
+
+    - name: Run link setup
+      run: make link
+
+    - name: Check symlinks created
+      run: |
+        ls -la ~/.zshrc ~/.zprofile ~/.gitconfig || echo "Some dotfiles may be missing"
+
+    - name: Run defaults setup
+      run: make defaults
+
+    - name: Check if key commands are available
+      run: |
+        which git && echo "✅ git available"
+        which tree && echo "✅ tree available" || echo "⚠️ tree not available"
+        which wget && echo "✅ wget available" || echo "⚠️ wget not available"
+
+    - name: Load .bash_profile
+      run: |
+        bash ~/.bash_profile 2> error.log; cat error.log
+        if [ -s error.log ]; then false; fi
+
+    - name: Load .bashrc
+      run: |
+        bash ~/.bashrc 2> error.log; cat error.log
+        if [ -s error.log ]; then false; fi 
