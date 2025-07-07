@@ -22,26 +22,18 @@ echo "Checking environment..."
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
   
-  # CI 環境対応: 手動で HTTPS クローンを実行
-  echo "Cloning Oh My Zsh repository..."
-  git clone https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
+  # CI 環境対応: Git の SSH を HTTPS にリダイレクト
+  git config --global url."https://github.com/".insteadOf "git@github.com:"
+  git config --global url."https://".insteadOf "git://"
+  
+  # 公式のインストール方法に従う
+  echo "Installing Oh My Zsh using official installer..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
   
   if [ $? -eq 0 ]; then
-    echo "Successfully cloned oh-my-zsh repository"
-    
-    # .zshrc のバックアップと作成
-    if [ -f "$HOME/.zshrc" ]; then
-      echo "Backing up existing .zshrc"
-      cp "$HOME/.zshrc" "$HOME/.zshrc.pre-oh-my-zsh"
-    fi
-    
-    # oh-my-zsh のテンプレートから .zshrc を作成
-    echo "Creating .zshrc from oh-my-zsh template"
-    cp "$HOME/.oh-my-zsh/templates/zshrc.zsh-template" "$HOME/.zshrc"
-    
     echo "Successfully installed oh-my-zsh"
   else
-    echo "Error: Failed to clone oh-my-zsh repository"
+    echo "Error: Failed to install oh-my-zsh"
     exit 1
   fi
 else
