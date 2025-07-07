@@ -18,10 +18,18 @@ SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 
 echo "Checking environment..."
 
-# Check if oh-my-zsh is installed
+# Check if oh-my-zsh is installed, if not install it
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  echo "Error: oh-my-zsh is not installed. Please install oh-my-zsh first."
-  exit 1
+  echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  if [ $? -eq 0 ]; then
+    echo "Successfully installed oh-my-zsh"
+  else
+    echo "Error: Failed to install oh-my-zsh"
+    exit 1
+  fi
+else
+  echo "oh-my-zsh is already installed"
 fi
 
 # Check if iTerm2 is installed
