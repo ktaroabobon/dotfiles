@@ -39,25 +39,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   else
     echo "oh-my-zsh is already installed"
   fi
-
-  # Change oh-my-zsh theme to Cobalt2
-  echo "Change oh-my-zsh theme to Cobalt2"
-  zshrc_file="${HOME}/.zshrc"
-  theme_line='ZSH_THEME="cobalt2"'
-  
-  if grep -q "^ZSH_THEME=" "$zshrc_file"; then
-    # Replace existing ZSH_THEME line
-    awk -v theme_line="$theme_line" '{sub(/^ZSH_THEME=.*$/, theme_line)}1' "$zshrc_file" > "${zshrc_file}.tmp" && mv "${zshrc_file}.tmp" "$zshrc_file"
-  else
-    # Add new ZSH_THEME line
-    echo "$theme_line" >> "$zshrc_file"
-  fi
-
-  # Add local bin to PATH if not already present
-  if ! grep -q '$HOME/.local/bin' "$zshrc_file"; then
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$zshrc_file"
-    echo "Added ~/.local/bin to PATH"
-  fi
 fi
 
 # Check if Ubuntu

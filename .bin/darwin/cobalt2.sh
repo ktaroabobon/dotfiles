@@ -56,6 +56,33 @@ fi
 
 #====================================================================================================
 #
+# Apply Configuration
+#
+#====================================================================================================
+
+echo "Applying configuration..."
+
+# Check if .zshrc already has cobalt2 theme
+if grep -q 'ZSH_THEME="cobalt2"' "$HOME/.zshrc"; then
+  echo "ZSH_THEME is already set to cobalt2"
+else
+  echo "Setting ZSH_THEME to cobalt2..."
+  # Backup current .zshrc
+  cp "$HOME/.zshrc" "$HOME/.zshrc.backup.$(date +%Y%m%d_%H%M%S)"
+  
+  # Replace theme setting
+  sed -i.bak 's/ZSH_THEME=".*"/ZSH_THEME="cobalt2"/' "$HOME/.zshrc"
+  echo "Updated ZSH_THEME to cobalt2"
+fi
+
+# Add local bin to PATH if not already present
+if ! grep -q '$HOME/.local/bin' "$HOME/.zshrc"; then
+  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
+  echo "Added ~/.local/bin to PATH"
+fi
+
+#====================================================================================================
+#
 # Install Powerline
 #
 #====================================================================================================
@@ -141,6 +168,9 @@ if [ ! -f "$ITERMCOLORS_PATH" ]; then
 else
   echo "cobalt2.itermcolors already exists in Downloads folder"
 fi
+
+echo "Reloading zsh configuration..."
+source "$HOME/.zshrc" 2>/dev/null || true
 
 echo "End cobalt2.sh"
 echo "----------------------------------------"
