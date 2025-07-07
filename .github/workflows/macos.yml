@@ -13,12 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # 修正: 正しい実行順序（init → brew → link → defaults）
-    - name: Run init script
-      run: make init
-
-    - name: Run brew setup
-      run: make brew
+    # 修正: make all で全てのセットアップを実行
+    - name: Run complete setup
+      run: make all
 
     - name: Check brew installation
       run: |
@@ -26,17 +23,11 @@ jobs:
         brew --version
         brew bundle check --file=".bin/darwin/Brewfile" || echo "Some packages may be missing"
 
-    - name: Run link setup
-      run: make link
-
     - name: Check symlinks created
       run: |
         ls -la ~/.zshrc ~/.zprofile ~/.gitconfig || echo "Some dotfiles may be missing"
 
-    - name: Run defaults setup
-      run: make defaults
-
-    # 新規追加: cobalt2 テーマ特有のテスト
+    # cobalt2 テーマ特有のテスト
     - name: Check cobalt2 theme installation
       run: |
         # oh-my-zsh のインストール確認
@@ -63,7 +54,7 @@ jobs:
           exit 1
         fi
 
-    # 新規追加: Powerline インストール確認
+    # Powerline インストール確認
     - name: Check Powerline installation
       run: |
         # pip での powerline-status インストール確認
@@ -86,7 +77,7 @@ jobs:
         which tree && echo "✅ tree available" || echo "⚠️ tree not available"
         which wget && echo "✅ wget available" || echo "⚠️ wget not available"
 
-    # 修正: エラーハンドリング改善
+    # エラーハンドリング改善
     - name: Load .zshrc
       run: |
         # ZSH 環境変数を設定
@@ -126,7 +117,7 @@ jobs:
           echo "⚠️ .zprofile not found"
         fi
 
-    # 新規追加: 最終的な動作確認
+    # 最終的な動作確認
     - name: Final verification
       run: |
         echo "=== Final Environment Check ==="
