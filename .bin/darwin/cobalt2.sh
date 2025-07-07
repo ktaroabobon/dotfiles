@@ -18,26 +18,10 @@ SCRIPT_DIR=$(cd $(dirname $0) && pwd)
 
 echo "Checking environment..."
 
-# Check if oh-my-zsh is installed, if not install it
+# Check if oh-my-zsh is installed
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
-  
-  # CI 環境対応: Git の SSH を HTTPS にリダイレクト
-  git config --global url."https://github.com/".insteadOf "git@github.com:"
-  git config --global url."https://".insteadOf "git://"
-  
-  # 公式のインストール方法に従う
-  echo "Installing Oh My Zsh using official installer..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-  
-  if [ $? -eq 0 ]; then
-    echo "Successfully installed oh-my-zsh"
-  else
-    echo "Error: Failed to install oh-my-zsh"
-    exit 1
-  fi
-else
-  echo "oh-my-zsh is already installed"
+  echo "Error: oh-my-zsh is not installed. Please run init.sh first."
+  exit 1
 fi
 
 # Check if iTerm2 is installed
@@ -157,36 +141,6 @@ if [ ! -f "$ITERMCOLORS_PATH" ]; then
 else
   echo "cobalt2.itermcolors already exists in Downloads folder"
 fi
-
-#====================================================================================================
-#
-# Apply Configuration
-#
-#====================================================================================================
-
-echo "Applying configuration..."
-
-# Check if .zshrc already has cobalt2 theme
-if grep -q 'ZSH_THEME="cobalt2"' "$HOME/.zshrc"; then
-  echo "ZSH_THEME is already set to cobalt2"
-else
-  echo "Setting ZSH_THEME to cobalt2..."
-  # Backup current .zshrc
-  cp "$HOME/.zshrc" "$HOME/.zshrc.backup.$(date +%Y%m%d_%H%M%S)"
-  
-  # Replace theme setting
-  sed -i.bak 's/ZSH_THEME=".*"/ZSH_THEME="cobalt2"/' "$HOME/.zshrc"
-  echo "Updated ZSH_THEME to cobalt2"
-fi
-
-# Add local bin to PATH if not already present
-if ! grep -q '$HOME/.local/bin' "$HOME/.zshrc"; then
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
-  echo "Added ~/.local/bin to PATH"
-fi
-
-echo "Reloading zsh configuration..."
-source "$HOME/.zshrc" 2>/dev/null || true
 
 echo "End cobalt2.sh"
 echo "----------------------------------------"

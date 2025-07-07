@@ -109,19 +109,3 @@ done
 
 echo "End defaults.sh"
 echo "----------------------------------------"
-
-#====================================================================================================
-#
-# Cobalt2 Theme Setup
-#
-#====================================================================================================
-
-# Get script directory and run cobalt2.sh
-SCRIPT_DIR=$(cd $(dirname $0) && pwd)
-if [ -f "$SCRIPT_DIR/cobalt2.sh" ]; then
-  echo "Running cobalt2.sh..."
-  chmod +x "$SCRIPT_DIR/cobalt2.sh"
-  "$SCRIPT_DIR/cobalt2.sh"
-else
-  echo "Warning: cobalt2.sh not found in $SCRIPT_DIR"
-fi

@@ -17,6 +17,47 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # Install vi using Homebrew
   echo "Install vi"
   brew install vim
+
+  # Check if oh-my-zsh is installed, if not install it
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
+    
+    # CI 環境対応: Git の SSH を HTTPS にリダイレクト
+    git config --global url."https://github.com/".insteadOf "git@github.com:"
+    git config --global url."https://".insteadOf "git://"
+    
+    # 公式のインストール方法に従う
+    echo "Installing Oh My Zsh using official installer..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    
+    if [ $? -eq 0 ]; then
+      echo "Successfully installed oh-my-zsh"
+    else
+      echo "Error: Failed to install oh-my-zsh"
+      exit 1
+    fi
+  else
+    echo "oh-my-zsh is already installed"
+  fi
+
+  # Change oh-my-zsh theme to Cobalt2
+  echo "Change oh-my-zsh theme to Cobalt2"
+  zshrc_file="${HOME}/.zshrc"
+  theme_line='ZSH_THEME="cobalt2"'
+  
+  if grep -q "^ZSH_THEME=" "$zshrc_file"; then
+    # Replace existing ZSH_THEME line
+    awk -v theme_line="$theme_line" '{sub(/^ZSH_THEME=.*$/, theme_line)}1' "$zshrc_file" > "${zshrc_file}.tmp" && mv "${zshrc_file}.tmp" "$zshrc_file"
+  else
+    # Add new ZSH_THEME line
+    echo "$theme_line" >> "$zshrc_file"
+  fi
+
+  # Add local bin to PATH if not already present
+  if ! grep -q '$HOME/.local/bin' "$zshrc_file"; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$zshrc_file"
+    echo "Added ~/.local/bin to PATH"
+  fi
 fi
 
 # Check if Ubuntu
