@@ -98,12 +98,17 @@ defaults write com.apple.finder CreateDesktop -bool false
 #
 #====================================================================================================
 
-echo "Set menu bar clock format"
+echo "Set menu bar clock format with seconds"
 defaults write com.apple.menuextra.clock DateFormat -string "EEE d MMM HH:mm:ss"
+
+echo "Show battery percentage in menu bar"
+defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
+defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist BatteryShowPercentage -bool true
 
 for app in "Dock" \
   "Finder" \
-  "SystemUIServer"; do
+  "SystemUIServer" \
+  "ControlCenter"; do
   killall "${app}" &>/dev/null 2>&1
 done
 
