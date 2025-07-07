@@ -17,6 +17,28 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # Install vi using Homebrew
   echo "Install vi"
   brew install vim
+
+  # Check if oh-my-zsh is installed, if not install it
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
+    
+    # CI 環境対応: Git の SSH を HTTPS にリダイレクト
+    git config --global url."https://github.com/".insteadOf "git@github.com:"
+    git config --global url."https://".insteadOf "git://"
+    
+    # 公式のインストール方法に従う
+    echo "Installing Oh My Zsh using official installer..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    
+    if [ $? -eq 0 ]; then
+      echo "Successfully installed oh-my-zsh"
+    else
+      echo "Error: Failed to install oh-my-zsh"
+      exit 1
+    fi
+  else
+    echo "oh-my-zsh is already installed"
+  fi
 fi
 
 # Check if Ubuntu

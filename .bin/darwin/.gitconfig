@@ -10,3 +10,18 @@
 
 [init]
     defaultBranch = main
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[alias]
+    sw = switch
+    ad = add
+    cm = commit
+    st = status
+    pl = pull
+    ps = push
+    br = branch
+    df = diff
+    lg = log
+    br = branch

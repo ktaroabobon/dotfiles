@@ -50,6 +50,9 @@ defaults write -g com.apple.mouse.scaling 2.5
 #
 #====================================================================================================
 
+echo "Disable Spotlight search hotkey (cmd+space)"
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '<dict><key>enabled</key><false/></dict>'
+
 #====================================================================================================
 #
 # Screen Shot

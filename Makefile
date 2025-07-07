@@ -3,11 +3,12 @@ help:
 	@echo "使い方: make [ターゲット]"
 	@echo ""
 	@echo "利用可能なターゲット:"
-	@echo "  all       : 初期化、brew、link の順で実行します。"
+	@echo "  all       : 初期化、brew、link、defaults、cobalt2 の順で実行します。"
 	@echo "  init      : 初期化スクリプトを実行します。"
 	@echo "  brew      : brew スクリプトを実行します。"
 	@echo "  link      : link スクリプトを実行します。"
 	@echo "  defaults  : defaults スクリプトを実行します。"
+	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo ""
 	@echo "注意事項:"
 	@echo "  - ターゲットを指定しない場合、help ターゲットが実行されます。"
@@ -18,11 +19,12 @@ help:
 	@echo "  - ターゲットの実行時には、依存関係のあるターゲットも実行されます。"
 	@echo ""
 	@echo "例:"
-	@echo "  make all       : 初期化、brew、link の順で実行します。"
+	@echo "  make all       : 初期化、brew、link、defaults、cobalt2 の順で実行します。"
 	@echo "  make init      : 初期化スクリプトを実行します。"
 	@echo "  make brew      : brew スクリプトを実行します。"
 	@echo "  make link      : link スクリプトを実行します。"
 	@echo "  make defaults  : defaults スクリプトを実行します。"
+	@echo "  make cobalt2   : cobalt2 テーマのセットアップを実行します。"
 
 .PHONY: all
 all:
@@ -30,6 +32,7 @@ all:
 	$(MAKE) brew
 	$(MAKE) link
 	$(MAKE) defaults
+	$(MAKE) cobalt2
 
 .PHONY: init
 init:
@@ -46,6 +49,10 @@ link:
 .PHONY: defaults
 defaults:
 	.bin/darwin/defaults.sh
+
+.PHONY: cobalt2
+cobalt2:
+	.bin/darwin/cobalt2.sh
 
 # ------------------------------------------------------------------------------
 # Test environment related commands and comments
