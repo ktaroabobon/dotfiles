@@ -21,7 +21,17 @@ echo "Checking environment..."
 # Check if oh-my-zsh is installed, if not install it
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   echo "oh-my-zsh is not installed. Installing oh-my-zsh..."
+  
+  # CI 環境対応: HTTPS を強制し、Git の設定を調整
+  export REPO=${REPO:-ohmyzsh/ohmyzsh}
+  export REMOTE=${REMOTE:-https://github.com/${REPO}.git}
+  
+  # Git 設定を一時的に変更（CI環境対応）
+  git config --global url."https://github.com/".insteadOf "git@github.com:"
+  
+  # oh-my-zsh をインストール
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  
   if [ $? -eq 0 ]; then
     echo "Successfully installed oh-my-zsh"
   else
