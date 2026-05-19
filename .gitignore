@@ -148,3 +148,29 @@ Temporary Items
 
 WhiteSur-gtk-theme
 WhiteSur-icon-theme
+
+### Claude Code dynamic data
+# .bin/darwin/.claude/ 配下に Claude Code 実行時の動的データが
+# 誤ってコミットされないよう明示的に除外する。
+.bin/darwin/.claude/backups/
+.bin/darwin/.claude/cache/
+.bin/darwin/.claude/debug/
+.bin/darwin/.claude/downloads/
+.bin/darwin/.claude/file-history/
+.bin/darwin/.claude/image-cache/
+.bin/darwin/.claude/paste-cache/
+.bin/darwin/.claude/plans/
+.bin/darwin/.claude/plugins/
+.bin/darwin/.claude/projects/
+.bin/darwin/.claude/session-env/
+.bin/darwin/.claude/sessions/
+.bin/darwin/.claude/shell-snapshots/
+.bin/darwin/.claude/statsig/
+.bin/darwin/.claude/tasks/
+.bin/darwin/.claude/telemetry/
+.bin/darwin/.claude/todos/
+.bin/darwin/.claude/history.jsonl
+.bin/darwin/.claude/.last-cleanup
+.bin/darwin/.claude/mcp-needs-auth-cache.json
+.bin/darwin/.claude/stats-cache.json
+.bin/darwin/.claude/memory/
