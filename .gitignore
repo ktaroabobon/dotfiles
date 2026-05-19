@@ -148,3 +148,59 @@ Temporary Items
 
 WhiteSur-gtk-theme
 WhiteSur-icon-theme
+
+### Claude Code dynamic data
+# .bin/darwin/.claude/ 配下に Claude Code 実行時の動的データが
+# 誤ってコミットされないよう明示的に除外する。
+.bin/darwin/.claude/backups/
+.bin/darwin/.claude/cache/
+.bin/darwin/.claude/debug/
+.bin/darwin/.claude/downloads/
+.bin/darwin/.claude/file-history/
+.bin/darwin/.claude/image-cache/
+.bin/darwin/.claude/paste-cache/
+.bin/darwin/.claude/plans/
+.bin/darwin/.claude/plugins/
+.bin/darwin/.claude/projects/
+.bin/darwin/.claude/session-env/
+.bin/darwin/.claude/sessions/
+.bin/darwin/.claude/shell-snapshots/
+.bin/darwin/.claude/statsig/
+.bin/darwin/.claude/tasks/
+.bin/darwin/.claude/telemetry/
+.bin/darwin/.claude/todos/
+.bin/darwin/.claude/history.jsonl
+.bin/darwin/.claude/.last-cleanup
+.bin/darwin/.claude/mcp-needs-auth-cache.json
+.bin/darwin/.claude/stats-cache.json
+.bin/darwin/.claude/memory/
+
+### Codex dynamic data
+# .bin/darwin/.codex/ 配下に Codex 実行時の動的データやマシン固有の状態が
+# 誤ってコミットされないよう明示的に除外する。
+# auth.json は認証情報なので絶対にコミット対象に入れない。
+.bin/darwin/.codex/auth.json
+.bin/darwin/.codex/.codex-global-state.json
+.bin/darwin/.codex/.codex-global-state.json.bak
+.bin/darwin/.codex/.personality_migration
+.bin/darwin/.codex/.tmp/
+.bin/darwin/.codex/ambient-suggestions/
+.bin/darwin/.codex/automations/
+.bin/darwin/.codex/cache/
+.bin/darwin/.codex/computer-use/
+.bin/darwin/.codex/history.jsonl
+.bin/darwin/.codex/installation_id
+.bin/darwin/.codex/log/
+.bin/darwin/.codex/logs_*.sqlite*
+.bin/darwin/.codex/memories/
+.bin/darwin/.codex/models_cache.json
+.bin/darwin/.codex/plugins/
+.bin/darwin/.codex/session_index.jsonl
+.bin/darwin/.codex/sessions/
+.bin/darwin/.codex/shell_snapshots/
+.bin/darwin/.codex/skills/
+.bin/darwin/.codex/sqlite/
+.bin/darwin/.codex/state_*.sqlite*
+.bin/darwin/.codex/tmp/
+.bin/darwin/.codex/vendor_imports/
+.bin/darwin/.codex/version.json

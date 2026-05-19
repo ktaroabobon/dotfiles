@@ -67,7 +67,27 @@ source ~/.zshrc
    - `非 ASCII フォント`: `Inconsolata for Powerline` を選択
 3. 必要に応じて `合字を使用` にチェック
 
-##### 2.3 設定の確認
+##### 2.3 Claude Code 設定
+
+`make link`（または `make all`）実行時に、`.bin/darwin/.claude/` 配下の管理対象ファイルが `$HOME/.claude/` に個別シンボリックリンクとして配置されます。
+
+- `CLAUDE.md` / `RTK.md` / `settings.json` / `keybindings.json`
+- `commands/`（ユーザー定義スラッシュコマンド）
+- `hooks/`（RTK rewrite hook など）
+- `skills/`（Kiro 系スキル、`create-issue` などのユーザースキル）
+
+`$HOME/.claude/` ディレクトリ自体は実体のまま残り、`sessions/` や `projects/`、`history.jsonl` などの動的データはリポジトリの管理対象外です。
+
+##### 2.4 Codex 設定
+
+`make link` 実行時に、`.bin/darwin/.codex/` 配下の管理対象ファイルが `$HOME/.codex/` に個別シンボリックリンクとして配置されます。
+
+- `config.toml`（モデル/承認/プロジェクト trust_level 等の設定）
+- `rules/default.rules`（承認ルール集）
+
+`auth.json` などの認証情報、`sessions/`、`history.jsonl`、`logs_*.sqlite`、`state_*.sqlite`、`automations/` などの動的データやマシン固有データはリポジトリの管理対象外です。
+
+##### 2.5 設定の確認
 
 新しいターミナルを開いて、以下が正しく表示されることを確認:
 

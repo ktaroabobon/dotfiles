@@ -1,0 +1,64 @@
+model = "gpt-5.5"
+model_reasoning_effort = "xhigh"
+approvals_reviewer = "user"
+[projects."/Users/ktaroabobon/workspace/KURA-Family-backend"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace/KURA-family-management"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace/acc-auto-publisher"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace/acc-auto-publisher-2023"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace/gotrading"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace"]
+trust_level = "trusted"
+
+[projects."/Users/ktaroabobon/workspace/dotfiles"]
+trust_level = "trusted"
+
+[notice]
+hide_full_access_warning = true
+hide_rate_limit_model_nudge = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
+[marketplaces.openai-bundled]
+last_updated = "2026-05-15T03:11:56Z"
+source_type = "local"
+source = "/Users/ktaroabobon/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.claude-plugins-official]
+last_updated = "2026-05-19T15:22:24Z"
+last_revision = "6a05dc286dcfa0f524d5c1f94fd513d2956fa494"
+source_type = "git"
+source = "https://github.com/anthropics/claude-plugins-official.git"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-05-15T03:13:43Z"
+source_type = "local"
+source = "/Users/ktaroabobon/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."plugin-dev@claude-plugins-official"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true

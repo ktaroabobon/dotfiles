@@ -168,39 +168,24 @@ bindkey '^G' peco-ghq-look
 
 export PATH="$HOME/.local/bin:$PATH"
 
-. "$HOME/.cargo/env"
+# pnpm end
+eval "$(direnv hook zsh)"
+export PATH="$HOME/.local/bin:$PATH"
+
+# ~/.zshrc に追記する内容
+
+# カスタム設定ファイルや関数を読み込む
+if [ -f ~/.zsh/ghw.zsh ]; then
+  source ~/.zsh/ghw.zsh
+fi
+
 eval "$(mise activate zsh)"
 
-# git worktree switch のための関数
-gws() {
-  # 引数（ブランチ名）が指定されていない場合は、使い方と一覧を表示して終了
-  if [ -z "$1" ]; then
-    echo "使用法: gws <branch-name>"
-    echo "現在のワーキングツリー:"
-    git worktree list
-    return 1
-  fi
+export PATH="$HOME/.dotnet:$PATH"
 
-  local target_branch=$1
-  # 'git worktree list' の出力から、指定されたブランチ名を含む行を探し、その行の最初のフィールド（パス）を取得
-  local target_path=$(git worktree list | grep "\[$target_branch\]" | awk '{print $1}')
+# Added by Antigravity
+export PATH="/Users/ktaroabobon/.antigravity/antigravity/bin:$PATH"
+alias code='agy'
 
-  # パスが見つからなかった場合
-  if [ -z "$target_path" ]; then
-    echo "エラー: ブランチ '$target_branch' がチェックアウトされているワーキングツリーが見つかりません。"
-    git worktree list
-    return 1
-  fi
-
-  # 見つかったパスに移動
-  echo "'$target_branch' の作業ディレクトリに移動します: $target_path"
-  cd "$target_path"
-}
-
-#compdef gws
-_gws_completion() {
-  local -a branches
-  branches=($(git worktree list | awk '{print $NF}' | sed 's/\[//g;s/\]//g'))
-  _describe 'branches' branches
-}
-compdef _gws_completion gws
+# Added by Antigravity
+export PATH="/Users/ktaroabobon/.antigravity/antigravity/bin:$PATH"
