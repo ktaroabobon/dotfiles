@@ -13,12 +13,13 @@ SCRIPT_DIR=$(
 )
 
 # ホーム直下にリンクするドットファイル/ドットディレクトリ。
-# .claude は実マシン側に動的データ (sessions/, projects/, history.jsonl 等) を
+# .claude / .codex は実マシン側に動的データ (sessions/, history.jsonl, sqlite 等) を
 # 持つため、ここではディレクトリ単位でリンクせず、後段で個別リンクする。
 for dotfile in "${SCRIPT_DIR}"/.??*; do
   [[ "$dotfile" == "${SCRIPT_DIR}/.git" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.DS_Store" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.claude" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.codex" ]] && continue
 
   ln -fnsv "$dotfile" "$HOME"
 done
@@ -48,6 +49,24 @@ if [ -d "$CLAUDE_SRC" ]; then
   for skill in "$CLAUDE_SRC/skills"/*/; do
     skill_name=$(basename "$skill")
     ln -fnsv "${skill%/}" "$HOME/.claude/skills/$skill_name"
+  done
+fi
+
+# Codex 設定の個別リンク。
+# $HOME/.codex/ は実体ディレクトリのまま残し、管理対象だけシンボリックリンクに差し替える。
+# auth.json などの認証情報やセッション/ログ系は管理対象外。
+CODEX_SRC="${SCRIPT_DIR}/.codex"
+if [ -d "$CODEX_SRC" ]; then
+  mkdir -p "$HOME/.codex/rules"
+
+  # ルート直下のファイル
+  for f in config.toml; do
+    [ -f "$CODEX_SRC/$f" ] && ln -fnsv "$CODEX_SRC/$f" "$HOME/.codex/$f"
+  done
+
+  # rules/ 配下のファイル
+  for rule in "$CODEX_SRC/rules"/*; do
+    [ -e "$rule" ] && ln -fnsv "$rule" "$HOME/.codex/rules/$(basename "$rule")"
   done
 fi
 
