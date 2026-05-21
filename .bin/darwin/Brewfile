@@ -1,5 +1,6 @@
 cask_args appdir: '/Applications'
 
+# ---- CLI tools ----
 brew "zsh"
 brew "mise"
 brew "git"
@@ -8,22 +9,35 @@ brew "tree"
 brew "wget"
 brew "ffmpeg"
 
-# Cask は使わない
-# 入れたいアプリのメモ
+# Mac App Store CLI（mas で配布されているアプリ用）
+brew "mas"
 
-# docker desktop
-# VSCode
-# Cursor
-# Arc
-# Logitech Options
-# DisplayLink
-# Zoom
-# Google Chrome
-# Discord
-# Slack
-# Microsoft Teams
-# Raycast
-# Notion
-# iTerm2
-# Line
-# WeChat
+# ---- GUI apps via Cask ----
+# Browsers
+cask "google-chrome"
+cask "arc"
+
+# Communication
+cask "slack"
+cask "discord"
+cask "microsoft-teams"
+cask "zoom"
+cask "line"
+cask "wechat"
+
+# Productivity / Editor
+cask "visual-studio-code"
+cask "cursor"
+cask "notion"
+cask "raycast"
+cask "iterm2"
+
+# Cloud storage
+cask "google-drive"
+
+# Dev / Containers
+cask "docker"
+
+# Peripherals / Display
+cask "displaylink"
+cask "logi-options-plus"

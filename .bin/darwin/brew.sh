@@ -13,7 +13,8 @@ sudo chmod -R g+w /usr/local/* 2>/dev/null || true
 
 # Get script directory and run Brewfile
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
-brew bundle --file="$SCRIPT_DIR/Brewfile"
+# 個別の cask / mas が失敗してもセットアップ全体は続行する（CI 等で利用不可な App Store / Cask があるため）
+brew bundle --file="$SCRIPT_DIR/Brewfile" || echo "Some packages failed to install (continuing)"
 
 echo "End brew.sh"
 echo "----------------------------------------"
