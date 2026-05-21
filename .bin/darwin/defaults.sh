@@ -126,6 +126,18 @@ defaults write com.apple.notificationcenterui "WhenLocked" -int 0 2>/dev/null ||
 echo "Shorten notification banner display time"
 defaults write com.apple.notificationcenterui bannerTime -int 1 2>/dev/null || true
 
+#====================================================================================================
+#
+# Keyboard
+#
+# Caps Lock <-> Left Control を入れ替える。再起動を跨いで永続化する場合は
+# System Settings → Keyboard → Modifier Keys でも同じ設定をしておくこと。
+#
+#====================================================================================================
+
+echo "Swap Caps Lock and Left Control (current session)"
+hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E0},{"HIDKeyboardModifierMappingSrc":0x7000000E0,"HIDKeyboardModifierMappingDst":0x700000039}]}' >/dev/null || true
+
 for app in "Dock" \
   "Finder" \
   "SystemUIServer" \
