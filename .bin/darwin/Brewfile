@@ -1,5 +1,6 @@
 cask_args appdir: '/Applications'
 
+# ---- CLI tools ----
 brew "zsh"
 brew "mise"
 brew "git"
@@ -7,23 +8,46 @@ brew "n"
 brew "tree"
 brew "wget"
 brew "ffmpeg"
+brew "gh"
+brew "awscli"
+brew "zellij"
+brew "colima"
 
-# Cask は使わない
-# 入れたいアプリのメモ
+# Mac App Store CLI（mas で配布されているアプリ用）
+brew "mas"
 
-# docker desktop
-# VSCode
-# Cursor
-# Arc
-# Logitech Options
-# DisplayLink
-# Zoom
-# Google Chrome
-# Discord
-# Slack
-# Microsoft Teams
-# Raycast
-# Notion
-# iTerm2
-# Line
-# WeChat
+# ---- Mac App Store apps via mas ----
+# 基本方針: App Store に存在するアプリは mas で管理する
+mas "Slack",  id: 803453959
+mas "LINE",   id: 539883307
+mas "WeChat", id: 836500024
+mas "Notion", id: 1559269364
+mas "Zoom Workplace", id: 546505307
+
+# ---- GUI apps via Cask (App Store に無いもの) ----
+# Browsers
+cask "google-chrome"
+cask "arc"
+
+# Communication
+cask "discord"
+cask "microsoft-teams"
+
+# Productivity / Editor
+cask "visual-studio-code"
+cask "cursor"
+cask "raycast"
+cask "iterm2"
+cask "ghostty"
+cask "claude"
+cask "codex"  # OpenAI Codex CLI (homebrew/core から cask に migrate されたため cask 扱い)
+
+# Cloud storage
+cask "google-drive"
+
+# Dev / Containers
+cask "docker"
+
+# Peripherals / Display
+cask "displaylink"
+cask "logi-options-plus"
