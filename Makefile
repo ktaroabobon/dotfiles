@@ -9,6 +9,7 @@ help:
 	@echo "  link      : link スクリプトを実行します。"
 	@echo "  defaults  : defaults スクリプトを実行します。"
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
+	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
 	@echo "  zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
 	@echo ""
 	@echo "注意事項:"
@@ -26,6 +27,7 @@ help:
 	@echo "  make link      : link スクリプトを実行します。"
 	@echo "  make defaults  : defaults スクリプトを実行します。"
 	@echo "  make cobalt2   : cobalt2 テーマのセットアップを実行します。"
+	@echo "  make ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
 	@echo "  make zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
 
 .PHONY: all
@@ -55,6 +57,11 @@ defaults:
 .PHONY: cobalt2
 cobalt2:
 	.bin/darwin/cobalt2.sh
+
+# ed25519 鍵を生成し、公開鍵をクリップボードへコピーする
+.PHONY: ssh-key
+ssh-key:
+	.bin/darwin/ssh_keygen.sh
 
 # Zoom バーチャル背景画像を .bin/darwin/zoom_backgrounds.txt の URL から一括ダウンロードする
 .PHONY: zoom-bg
