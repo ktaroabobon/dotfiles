@@ -8,27 +8,34 @@ brew "n"
 brew "tree"
 brew "wget"
 brew "ffmpeg"
+brew "gh"
+brew "awscli"
+brew "zellij"
+brew "colima"
 
 # Mac App Store CLI（mas で配布されているアプリ用）
 brew "mas"
 
-# ---- GUI apps via Cask ----
+# ---- Mac App Store apps via mas ----
+# 基本方針: App Store に存在するアプリは mas で管理する
+mas "Slack",  id: 803453959
+mas "LINE",   id: 539883307
+mas "WeChat", id: 836500024
+mas "Notion", id: 1559269364
+mas "Zoom Workplace", id: 546505307
+
+# ---- GUI apps via Cask (App Store に無いもの) ----
 # Browsers
 cask "google-chrome"
 cask "arc"
 
 # Communication
-cask "slack"
 cask "discord"
 cask "microsoft-teams"
-cask "zoom"
-cask "line"
-cask "wechat"
 
 # Productivity / Editor
 cask "visual-studio-code"
 cask "cursor"
-cask "notion"
 cask "raycast"
 cask "iterm2"
 
