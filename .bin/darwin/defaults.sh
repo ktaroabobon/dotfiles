@@ -105,10 +105,29 @@ echo "Show battery percentage in menu bar"
 defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
 defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist BatteryShowPercentage -bool true
 
+#====================================================================================================
+#
+# Notifications
+#
+# macOS のバージョンによっては存在しないキーがあるため、個別の失敗はセットアップ全体を止めない。
+# アプリ単位の通知 OFF は System Settings → Notifications で個別対応する。
+#
+#====================================================================================================
+
+echo "Show Focus modes pill in Control Center menu bar"
+defaults write com.apple.controlcenter "FocusModes" -bool true 2>/dev/null || true
+
+echo "Hide notification previews on the lock screen"
+defaults write com.apple.notificationcenterui "WhenLocked" -int 0 2>/dev/null || true
+
+echo "Shorten notification banner display time"
+defaults write com.apple.notificationcenterui bannerTime -int 1 2>/dev/null || true
+
 for app in "Dock" \
   "Finder" \
   "SystemUIServer" \
-  "ControlCenter"; do
+  "ControlCenter" \
+  "NotificationCenter"; do
   killall "${app}" &>/dev/null 2>&1
 done
 
