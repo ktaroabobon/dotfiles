@@ -12,6 +12,7 @@ brew "gh"
 brew "awscli"
 brew "zellij"
 brew "colima"
+brew "codex"
 
 # Mac App Store CLI（mas で配布されているアプリ用）
 brew "mas"
@@ -38,6 +39,8 @@ cask "visual-studio-code"
 cask "cursor"
 cask "raycast"
 cask "iterm2"
+cask "ghostty"
+cask "claude"
 
 # Cloud storage
 cask "google-drive"
