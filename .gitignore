@@ -204,3 +204,6 @@ WhiteSur-icon-theme
 .bin/darwin/.codex/tmp/
 .bin/darwin/.codex/vendor_imports/
 .bin/darwin/.codex/version.json
+
+### dotfiles local config
+.bin/darwin/zoom_backgrounds.txt

@@ -1,8 +1,0 @@
-# Zoom バーチャル背景としてダウンロードしたい画像 URL を 1 行ずつ記述する。
-# 行頭の # はコメントとして扱われ、空行は無視される。
-# Google Photos の共有アルバムは認証なしで個別画像 URL を取得できないため、
-# 直リンク (例: https://example.com/zoom-bg/space.jpg) を貼ること。
-#
-# 例:
-# https://example.com/zoom-bg/space.jpg
-# https://example.com/zoom-bg/forest.png

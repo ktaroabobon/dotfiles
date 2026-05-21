@@ -15,7 +15,16 @@ mkdir -p "${DEST_DIR}"
 echo "保存先: ${DEST_DIR}"
 
 if [ ! -f "${URLS_FILE}" ]; then
-  echo "URL リスト ${URLS_FILE} が存在しないためスキップします"
+  cat <<EOF
+URL リスト ${URLS_FILE} が存在しないためスキップします。
+ダウンロードしたい場合は、以下のフォーマットで作成してください:
+
+  # 行頭の # はコメント、空行は無視されます
+  https://example.com/zoom-bg/space.jpg
+  https://example.com/zoom-bg/forest.png
+
+(個人 URL を含むため .gitignore で管理対象外にしています)
+EOF
   echo "End zoom_backgrounds.sh"
   echo "----------------------------------------"
   exit 0
