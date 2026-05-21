@@ -10,6 +10,7 @@ help:
 	@echo "  defaults  : defaults スクリプトを実行します。"
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
+	@echo "  zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
 	@echo ""
 	@echo "注意事項:"
 	@echo "  - ターゲットを指定しない場合、help ターゲットが実行されます。"
@@ -27,6 +28,7 @@ help:
 	@echo "  make defaults  : defaults スクリプトを実行します。"
 	@echo "  make cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  make ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
+	@echo "  make zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
 
 .PHONY: all
 all:
@@ -60,6 +62,11 @@ cobalt2:
 .PHONY: ssh-key
 ssh-key:
 	.bin/darwin/ssh_keygen.sh
+
+# Zoom バーチャル背景画像を .bin/darwin/zoom_backgrounds.txt の URL から一括ダウンロードする
+.PHONY: zoom-bg
+zoom-bg:
+	.bin/darwin/zoom_backgrounds.sh
 
 # ------------------------------------------------------------------------------
 # Test environment related commands and comments
