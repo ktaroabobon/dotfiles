@@ -105,6 +105,9 @@ echo "Show battery percentage in menu bar"
 defaults write com.apple.controlcenter "NSStatusItem Visible Battery" -bool true
 defaults write ~/Library/Preferences/ByHost/com.apple.controlcenter.plist BatteryShowPercentage -bool true
 
+echo "Show Bluetooth in menu bar"
+defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
+
 for app in "Dock" \
   "Finder" \
   "SystemUIServer" \
