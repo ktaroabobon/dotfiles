@@ -12,7 +12,6 @@ brew "gh"
 brew "awscli"
 brew "zellij"
 brew "colima"
-brew "codex"
 
 # Mac App Store CLI（mas で配布されているアプリ用）
 brew "mas"
@@ -41,6 +40,7 @@ cask "raycast"
 cask "iterm2"
 cask "ghostty"
 cask "claude"
+cask "codex"  # OpenAI Codex CLI (homebrew/core から cask に migrate されたため cask 扱い)
 
 # Cloud storage
 cask "google-drive"

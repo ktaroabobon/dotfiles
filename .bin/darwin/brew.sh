@@ -13,8 +13,19 @@ sudo chmod -R g+w /usr/local/* 2>/dev/null || true
 
 # Get script directory and run Brewfile
 SCRIPT_DIR=$(cd $(dirname $0) && pwd)
-# 個別の cask / mas が失敗してもセットアップ全体は続行する（CI 等で利用不可な App Store / Cask があるため）
-brew bundle --file="$SCRIPT_DIR/Brewfile" || echo "Some packages failed to install (continuing)"
+BREWFILE="$SCRIPT_DIR/Brewfile"
+
+if [ "${CI:-}" = "true" ]; then
+  # CI 環境では cask / mas のインストールは時間が掛かる & 認証が必要なためスキップする。
+  # formula のみを一時 Brewfile に抽出して bundle する。
+  TMP_BREWFILE=$(mktemp)
+  grep -Ev '^[[:space:]]*(cask|mas)[[:space:]]' "$BREWFILE" > "$TMP_BREWFILE"
+  brew bundle --no-upgrade --file="$TMP_BREWFILE" || echo "Some packages failed to install (continuing)"
+  rm -f "$TMP_BREWFILE"
+else
+  # 実機では cask / mas も含めて全部インストール。失敗は続行扱い。
+  brew bundle --file="$BREWFILE" || echo "Some packages failed to install (continuing)"
+fi
 
 echo "End brew.sh"
 echo "----------------------------------------"
