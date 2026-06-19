@@ -185,7 +185,11 @@ export PATH="$HOME/.dotnet:$PATH"
 
 # Added by Antigravity
 export PATH="/Users/ktaroabobon/.antigravity/antigravity/bin:$PATH"
-alias code='agy'
 
-# Added by Antigravity
-export PATH="/Users/ktaroabobon/.antigravity/antigravity/bin:$PATH"
+# pnpm
+export PNPM_HOME="/Users/ktaroabobon/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
