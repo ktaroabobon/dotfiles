@@ -1,0 +1,28 @@
+FROM ubuntu:24.04
+
+# init.sh とテストスクリプトの shebang が #!/bin/zsh なので、zsh はイメージ側で
+# 入れておく必要がある（init.sh 自身が zsh として起動されるため、
+# init.sh の中の apt install zsh では間に合わない）。
+# git / curl / ca-certificates も同じ理由で先に入れる。
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        sudo \
+        zsh \
+        git \
+        curl \
+        ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# 非対話で sudo を使えるユーザーを作る。
+# パスワード付きにすると init.sh の `sudo apt` が入力待ちで固まる。
+RUN useradd -m -s /bin/zsh docker \
+    && echo 'docker ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/docker \
+    && chmod 0440 /etc/sudoers.d/docker
+
+WORKDIR /app
+
+# ソースは compose の bind mount (.:/app) で渡す。
+# COPY するとイメージ内の複製とマウントが二重になり、
+# ホスト側の編集が反映されているのか分からなくなる。
+
+USER docker
