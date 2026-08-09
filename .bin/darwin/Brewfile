@@ -1,5 +1,10 @@
 cask_args appdir: '/Applications'
 
+# ---- Taps ----
+tap "stablyai/orca"
+tap "stripe/stripe-cli"
+tap "supabase/tap"
+
 # ---- CLI tools ----
 brew "zsh"
 brew "mise"
@@ -22,6 +27,52 @@ brew "peco"    # .zshrc: Ctrl-R / Ctrl-E / Ctrl-G のウィジェット
 brew "ghq"     # .zshrc: peco-ghq-look
 brew "jq"      # .claude/hooks/rtk-rewrite.sh が必須としている
 
+# rtk 本体。hook (rtk-rewrite.sh) は jq と rtk >= 0.23.0 の両方を要求する
+brew "rtk"
+
+# 注: .zshrc の plugins=() に zsh-syntax-highlighting を書いているが、
+# あちらは oh-my-zsh のカスタムプラグイン（$ZSH_CUSTOM/plugins/ への clone）を
+# 指しており、この formula とは別物。formula 側は .zshrc から
+# `source $(brew --prefix)/share/zsh-syntax-highlighting/...` する必要があり、
+# 現状はどちらも有効になっていない（要整理）。
+brew "zsh-syntax-highlighting"
+
+# ---- エディタ / 端末 ----
+brew "vim"     # init.sh も brew install vim している（Brewfile 側に無かった）
+brew "tmux"
+brew "ripgrep"
+
+# ---- CI / IaC ----
+brew "act"        # GitHub Actions のローカル実行
+brew "actionlint" # ワークフローの lint
+brew "tflint"
+brew "infracost"
+
+# ---- クラウド / データベース ----
+brew "awscli-local"
+brew "libpq"
+brew "grafana"
+brew "supabase/tap/supabase"
+brew "stripe/stripe-cli/stripe"
+
+# ---- モバイル開発 ----
+brew "cocoapods"
+brew "fastlane"
+brew "ios-deploy"
+
+# ---- 言語ランタイム ----
+# .zshrc に `export PATH="$HOME/.dotnet:$PATH"` があるので dotnet はセット
+brew "dotnet"
+brew "openjdk"
+brew "openjdk@17"
+brew "openjdk@21"
+brew "ni"      # npm / yarn / pnpm を使い分けるラッパー
+
+# ---- その他 ----
+brew "graphviz"
+brew "poppler"
+brew "yt-dlp"
+
 # Mac App Store CLI（mas で配布されているアプリ用）
 brew "mas"
 
@@ -32,6 +83,13 @@ mas "LINE",   id: 539883307
 mas "WeChat", id: 836500024
 mas "Notion", id: 1559269364
 mas "Zoom Workplace", id: 546505307
+mas "Microsoft PowerPoint", id: 462062816
+mas "OneDrive",     id: 823766827
+mas "Prime Video",  id: 545519333
+mas "Pixea",        id: 1507782672
+mas "Sequel Ace",   id: 1518036000
+# 注: iMovie / GarageBand / Keynote / Pages / Numbers も実機に入っているが、
+# Apple 純正で新しい Mac にも最初から入るため、あえて管理対象にしていない。
 
 # ---- GUI apps via Cask (App Store に無いもの) ----
 # Browsers
@@ -66,3 +124,15 @@ cask "tailscale-app"
 # Peripherals / Display
 cask "displaylink"
 cask "logi-options-plus"
+
+# Dev / Cloud CLI
+cask "android-platform-tools"
+cask "gcloud-cli"
+cask "session-manager-plugin"
+
+# Database / Viewer
+cask "pgadmin4"
+cask "qview"
+# tap 付きはフルネームで書く（`brew bundle dump` の表記に合わせ、
+# 週次の反映漏れチェックが毎回差分として拾わないようにする）
+cask "stablyai/orca/orca"

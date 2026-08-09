@@ -95,7 +95,38 @@ source ~/.zshrc
 - Git ブランチ情報の表示
 - Powerline フォントの正しい表示
 
-#### 3. 個別実行（トラブルシューティング用）
+#### 3. Brewfile の反映漏れチェック（週次）
+
+実機に入れたツールを Brewfile に書き忘れると、新しいマシンで `make all` しても再現しません。これを週次で検出します。
+
+```sh
+# 実機に入っていて Brewfile に無いものを表示する
+make brew-drift
+```
+
+差分があれば draft PR を作れます。
+
+```sh
+make brew-drift-pr
+```
+
+毎週月曜 10:00 に自動でチェックして PR を作るには、launchd に登録します。
+
+```sh
+make brew-drift-install     # 登録
+make brew-drift-status      # 登録状態の確認
+make brew-drift-uninstall   # 解除
+```
+
+- plist にはリポジトリの実パスを焼き込むため、**本体のリポジトリで実行してください**（git worktree からの登録は弾かれます）
+- 指定時刻に Mac がスリープ/電源オフでも、次に起動したときに実行されます
+- ログは `~/Library/Logs/brew-drift.log`
+- 前回の PR が未マージのときは、重ねて作らずスキップします
+- 管理対象にしたくないものは [.bin/darwin/brew_drift_ignore.txt](.bin/darwin/brew_drift_ignore.txt) に追加すると次回から検出されません（Apple 純正アプリは登録済み）
+
+検出は `brew bundle dump` と Brewfile の突き合わせで行うため、tap 付きのパッケージは Brewfile 側も `cask "stablyai/orca/orca"` のようにフルネームで書いてください。
+
+#### 4. 個別実行（トラブルシューティング用）
 
 必要に応じて、個別のコマンドを実行できます：
 
