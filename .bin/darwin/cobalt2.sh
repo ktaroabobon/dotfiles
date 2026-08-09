@@ -62,21 +62,39 @@ fi
 
 echo "Applying configuration..."
 
+# link.sh の後は ~/.zshrc がリポジトリへのシンボリックリンクになっている。
+# その状態で sed / >> を掛けるとリポジトリ本体を書き換えてしまうため、
+# 管理下にあるときは直さずにエラーで知らせる。
+zshrc_is_managed() {
+  [ -L "$HOME/.zshrc" ]
+}
+
 # Check if .zshrc already has cobalt2 theme
 if grep -q 'ZSH_THEME="cobalt2"' "$HOME/.zshrc"; then
   echo "ZSH_THEME is already set to cobalt2"
+elif zshrc_is_managed; then
+  echo "Error: ~/.zshrc is a symlink into this repository, but ZSH_THEME is not cobalt2."
+  echo "       Set ZSH_THEME=\"cobalt2\" in .bin/darwin/.zshrc instead of editing ~/.zshrc."
+  exit 1
 else
   echo "Setting ZSH_THEME to cobalt2..."
   # Backup current .zshrc
   cp "$HOME/.zshrc" "$HOME/.zshrc.backup.$(date +%Y%m%d_%H%M%S)"
-  
+
   # Replace theme setting
   sed -i.bak 's/ZSH_THEME=".*"/ZSH_THEME="cobalt2"/' "$HOME/.zshrc"
   echo "Updated ZSH_THEME to cobalt2"
 fi
 
 # Add local bin to PATH if not already present
-if ! grep -q '$HOME/.local/bin' "$HOME/.zshrc"; then
+# (-F でリテラル比較する。パターン扱いだと `.` が任意の 1 文字になる)
+if grep -qF '$HOME/.local/bin' "$HOME/.zshrc"; then
+  echo "~/.local/bin is already in PATH"
+elif zshrc_is_managed; then
+  echo "Error: ~/.zshrc is a symlink into this repository, but ~/.local/bin is not in PATH."
+  echo "       Add it to .bin/darwin/.zshrc instead of editing ~/.zshrc."
+  exit 1
+else
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
   echo "Added ~/.local/bin to PATH"
 fi
@@ -123,8 +141,11 @@ TEMP_DIR=$(mktemp -d)
 cd "$TEMP_DIR"
 
 # Clone powerline fonts repository
+# 管理下の .gitconfig には `[url "git@github.com:"] insteadOf = https://github.com/`
+# があるため、そのまま clone すると SSH に書き換わる。SSH 鍵が無い環境 (CI など)
+# では失敗するので、グローバル設定を読まずに https のまま取得する。
 echo "Cloning powerline fonts repository..."
-git clone https://github.com/powerline/fonts.git
+GIT_CONFIG_GLOBAL=/dev/null git clone --depth 1 https://github.com/powerline/fonts.git
 
 if [ $? -eq 0 ]; then
   echo "Successfully cloned powerline fonts repository"

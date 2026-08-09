@@ -13,6 +13,15 @@ brew "awscli"
 brew "zellij"
 brew "colima"
 
+# ---- .zshrc / Claude Code hook が起動時に参照するもの ----
+# 入っていないとシェルを開くたびに command not found が出る。
+# `eval "$(direnv hook zsh)"` は direnv が無くても終了コード 0 を返すため、
+# CI では .zshrc 読み込み後の出力を command not found で検査している。
+brew "direnv"  # .zshrc: eval "$(direnv hook zsh)"
+brew "peco"    # .zshrc: Ctrl-R / Ctrl-E / Ctrl-G のウィジェット
+brew "ghq"     # .zshrc: peco-ghq-look
+brew "jq"      # .claude/hooks/rtk-rewrite.sh が必須としている
+
 # Mac App Store CLI（mas で配布されているアプリ用）
 brew "mas"
 
