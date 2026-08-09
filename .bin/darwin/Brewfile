@@ -48,6 +48,12 @@ cask "google-drive"
 # Dev / Containers
 cask "docker"
 
+# Network / VPN
+# tailnet 経由で home-infra の常駐ホスト（WSL2）へ届くために要る。
+# CLI だけの formula "tailscale" ではなく GUI アプリの cask を使う
+# （macOS では daemon をアプリが持つ。ログイン状態もアプリ側で保持される）
+cask "tailscale-app"
+
 # Peripherals / Display
 cask "displaylink"
 cask "logi-options-plus"

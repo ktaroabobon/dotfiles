@@ -8,6 +8,7 @@ help:
 	@echo "  brew      : brew スクリプトを実行します。"
 	@echo "  link      : link スクリプトを実行します。(macOS)"
 	@echo "  link-ubuntu : Ubuntu / WSL2 向けのリンクを実行します。"
+	@echo "  tailscale-ubuntu : Tailscale を導入します。(Ubuntu / WSL2)"
 	@echo "  defaults  : defaults スクリプトを実行します。"
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
@@ -54,6 +55,11 @@ link:
 .PHONY: link-ubuntu
 link-ubuntu:
 	.bin/ubuntu/link.sh
+
+# Tailscale を公式 apt リポジトリから導入する (Ubuntu / WSL2)
+.PHONY: tailscale-ubuntu
+tailscale-ubuntu:
+	.bin/ubuntu/tailscale.sh
 
 .PHONY: defaults
 defaults:
