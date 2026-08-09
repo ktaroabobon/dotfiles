@@ -4,6 +4,7 @@ cask_args appdir: '/Applications'
 tap "stablyai/orca"
 tap "stripe/stripe-cli"
 tap "supabase/tap"
+tap "terraform-linters/tap"
 
 # ---- CLI tools ----
 brew "zsh"
@@ -45,7 +46,8 @@ brew "ripgrep"
 # ---- CI / IaC ----
 brew "act"        # GitHub Actions のローカル実行
 brew "actionlint" # ワークフローの lint
-brew "tflint"
+# tflint は homebrew/core から削除され、公式 tap 提供に変わっている
+brew "terraform-linters/tap/tflint"
 brew "infracost"
 
 # ---- クラウド / データベース ----
