@@ -56,9 +56,14 @@ jobs:
         # check も同じフィルタを掛けた Brewfile に対して行う
         # (フル Brewfile に対して check すると構造的に必ず missing になり、
         #  検証として成立しない)
+        #
+        # --no-upgrade は install 側 (brew.sh) と条件を揃えるために要る。
+        # 付けないと「入っているが古い」だけの formula まで未充足と判定され、
+        # ランナーにプリインストールされた git / gh / wget で必ず落ちる。
+        # --verbose は落ちたときに何が足りないかをログに残すため。
         tmp_brewfile=$(mktemp)
         grep -Ev '^[[:space:]]*(cask|mas)[[:space:]]' .bin/darwin/Brewfile > "$tmp_brewfile"
-        brew bundle check --file="$tmp_brewfile"
+        brew bundle check --no-upgrade --verbose --file="$tmp_brewfile"
         rm -f "$tmp_brewfile"
 
     - name: Check cask / mas entries still exist upstream
