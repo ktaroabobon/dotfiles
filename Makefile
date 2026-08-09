@@ -10,6 +10,7 @@ help:
 	@echo "  link      : link スクリプトを実行します。(macOS)"
 	@echo "  link-ubuntu : Ubuntu / WSL2 向けのリンクを実行します。"
 	@echo "  tailscale-ubuntu : Tailscale を導入します。(Ubuntu / WSL2)"
+	@echo "  omz-plugins : oh-my-zsh のカスタムプラグインを配置します。(macOS)"
 	@echo "  defaults  : defaults スクリプトを実行します。"
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
@@ -41,6 +42,7 @@ all:
 	$(MAKE) init
 	$(MAKE) brew
 	$(MAKE) link
+	$(MAKE) omz-plugins
 	$(MAKE) defaults
 	$(MAKE) cobalt2
 
@@ -71,6 +73,11 @@ link-ubuntu:
 .PHONY: tailscale-ubuntu
 tailscale-ubuntu:
 	.bin/ubuntu/tailscale.sh
+
+# .zshrc の plugins=() が参照する oh-my-zsh のカスタムプラグインを配置する
+.PHONY: omz-plugins
+omz-plugins:
+	.bin/darwin/omz_plugins.sh
 
 .PHONY: defaults
 defaults:

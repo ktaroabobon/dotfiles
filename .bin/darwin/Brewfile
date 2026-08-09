@@ -31,11 +31,10 @@ brew "jq"      # .claude/hooks/rtk-rewrite.sh が必須としている
 # rtk 本体。hook (rtk-rewrite.sh) は jq と rtk >= 0.23.0 の両方を要求する
 brew "rtk"
 
-# 注: .zshrc の plugins=() に zsh-syntax-highlighting を書いているが、
-# あちらは oh-my-zsh のカスタムプラグイン（$ZSH_CUSTOM/plugins/ への clone）を
-# 指しており、この formula とは別物。formula 側は .zshrc から
-# `source $(brew --prefix)/share/zsh-syntax-highlighting/...` する必要があり、
-# 現状はどちらも有効になっていない（要整理）。
+# 注: .zshrc の plugins=() が読むのは oh-my-zsh のカスタムプラグイン版
+# （make omz-plugins が $ZSH_CUSTOM/plugins/ に配置する）で、この formula とは別物。
+# formula 版は実機に入っているので Brewfile に残しているが、.zshrc からは
+# source していない。不要なら実機からアンインストールしてこの行も消すこと。
 brew "zsh-syntax-highlighting"
 
 # ---- エディタ / 端末 ----

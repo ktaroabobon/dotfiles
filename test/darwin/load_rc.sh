@@ -52,3 +52,10 @@ if grep -q "command not found" "$log"; then
   echo "   rc が参照しているツールが Brewfile に入っているか確認してください"
   exit 1
 fi
+
+# oh-my-zsh は plugins=() に未配置のものがあっても警告だけで続行する
+if grep -q "plugin '.*' not found" "$log"; then
+  echo "❌ $rc の読み込み中に oh-my-zsh のプラグインが見つかりませんでした"
+  echo "   make omz-plugins で配置されるはずのものです"
+  exit 1
+fi

@@ -31,7 +31,9 @@ make all
 1. **初期化** (`make init`): 基本的なセットアップ
 2. **Homebrew** (`make brew`): パッケージマネージャーとアプリケーションのインストール
 3. **リンク** (`make link`): 設定ファイルのシンボリックリンク作成
-4. **システム設定** (`make defaults`): macOS の各種設定 + Cobalt2 テーマの自動インストール
+4. **oh-my-zsh プラグイン** (`make omz-plugins`): `.zshrc` の `plugins=()` が参照するカスタムプラグインを配置
+5. **システム設定** (`make defaults`): macOS の各種設定
+6. **Cobalt2** (`make cobalt2`): テーマと Powerline フォントのインストール
 
 #### 2. 自動セットアップ後の手動設定
 
