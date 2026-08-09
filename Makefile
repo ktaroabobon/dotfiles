@@ -3,7 +3,8 @@ help:
 	@echo "使い方: make [ターゲット]"
 	@echo ""
 	@echo "利用可能なターゲット:"
-	@echo "  all       : 初期化、brew、link、defaults、cobalt2 の順で実行します。"
+	@echo "  all       : 初期化、brew、link、defaults、cobalt2 の順で実行します。(macOS)"
+	@echo "  all-ubuntu : 初期化と link-ubuntu を実行します。(Ubuntu / WSL2)"
 	@echo "  init      : 初期化スクリプトを実行します。"
 	@echo "  brew      : brew スクリプトを実行します。"
 	@echo "  link      : link スクリプトを実行します。(macOS)"
@@ -39,6 +40,13 @@ all:
 	$(MAKE) link
 	$(MAKE) defaults
 	$(MAKE) cobalt2
+
+# Ubuntu / WSL2 向けの一括セットアップ。GUI (defaults) と snap は WSL2 では
+# 使わないため含めない。
+.PHONY: all-ubuntu
+all-ubuntu:
+	$(MAKE) init
+	$(MAKE) link-ubuntu
 
 .PHONY: init
 init:
@@ -85,7 +93,7 @@ zoom-bg:
 # build test environment
 .PHONY: build
 build:
-	docker-compose up -d --build
+	docker compose up -d --build
 
 # login to test environment
 .PHONY: login
@@ -95,12 +103,12 @@ login:
 # ubuntuコンテナにubuntuユーザーでログイン
 .PHONY: login/ubuntu
 login/ubuntu:
-	docker-compose exec ubuntu sh -c 'if command -v zsh > /dev/null 2>&1; then exec zsh; else exec bash; fi'
+	docker compose exec ubuntu sh -c 'if command -v zsh > /dev/null 2>&1; then exec zsh; else exec bash; fi'
 
 # down test environment
 .PHONY: down
 down:
-	docker-compose down
+	docker compose down
 
 # 環境をリビルドする
 .PHONY: rebuild
@@ -111,4 +119,4 @@ rebuild:
 # init.shのテスト（test/test_init.sh）を実行する
 .PHONY: test/init
 test/init:
-	docker-compose exec ubuntu sh -c '.bin/test/test_init.sh'
+	docker compose exec -T ubuntu sh -c 'test/test_init.sh'

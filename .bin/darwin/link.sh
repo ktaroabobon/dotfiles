@@ -15,21 +15,30 @@ SCRIPT_DIR=$(
 # ホーム直下にリンクするドットファイル/ドットディレクトリ。
 # .claude / .codex は実マシン側に動的データ (sessions/, history.jsonl, sqlite 等) を
 # 持つため、ここではディレクトリ単位でリンクせず、後段で個別リンクする。
+# .zsh も同様に個別リンクする（理由は下記）。
 for dotfile in "${SCRIPT_DIR}"/.??*; do
   [[ "$dotfile" == "${SCRIPT_DIR}/.git" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.DS_Store" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.claude" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.codex" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.zsh" ]] && continue
 
   ln -fnsv "$dotfile" "$HOME"
 done
 
-# 共有スクリプト（プラットフォーム非依存）を ~/.zsh へリンクする。
-# darwin/.zsh は上のループでディレクトリごとリンクされるため、その中身とは別に
-# .bin/shared/ を明示的に配る。
+# ~/.zsh は実ディレクトリとして作り、中身を個別にリンクする。
+# ディレクトリごとリンクすると ~/.zsh が darwin/.zsh へのシンボリックリンクに
+# なり、後段の shared のリンクがそれを辿って *リポジトリの中* に作られてしまう。
+mkdir -p "$HOME/.zsh"
+
+# darwin 固有のスクリプト
+for f in "${SCRIPT_DIR}"/.zsh/*; do
+  [ -e "$f" ] && ln -fnsv "$f" "$HOME/.zsh/$(basename "$f")"
+done
+
+# 共有スクリプト（プラットフォーム非依存）
 SHARED_DIR="$(cd "${SCRIPT_DIR}/../shared" && pwd)"
 if [ -d "$SHARED_DIR" ]; then
-  mkdir -p "$HOME/.zsh"
   for shared in "$SHARED_DIR"/*; do
     [ -e "$shared" ] && ln -fnsv "$shared" "$HOME/.zsh/$(basename "$shared")"
   done

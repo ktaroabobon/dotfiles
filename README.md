@@ -7,7 +7,7 @@
 ## 要件
 
 - macOS バージョン 11.0 以降
-- Ubuntu バージョン 22.04
+- Ubuntu 24.04（WSL2 での利用を想定）
 
 ## インストール
 
@@ -113,13 +113,30 @@ make link
 make defaults
 ```
 
-### Ubuntu
+### Ubuntu / WSL2
 
-Ubuntu 用のセットアップ：
+#### 1. 自動セットアップ
 
 ```sh
-cd dofiles
-.bin/init.sh
+cd dotfiles
+make all-ubuntu
 ```
 
-次のステップは [こちら](.bin/ubuntu/README.md) を参照してください。
+`make all-ubuntu` は以下の順序で実行されます：
+
+1. **初期化** (`make init`): apt パッケージ、zsh、oh-my-zsh（agnoster テーマ）のセットアップ
+2. **リンク** (`make link-ubuntu`): 共有スクリプト（`hictl`）を `~/.zsh` に配置し、`.zshrc` / `.bashrc` から source
+
+macOS 側の `make link` と違い、シェルの rc 自体は管理対象にしていません（既存環境を壊さないため）。
+
+#### 2. Tailscale（tailnet の常駐ホストにする場合）
+
+```sh
+make tailscale-ubuntu
+```
+
+tailnet への参加（`tailscale up`）は認証が要るため手動です。スクリプトの出力に手順が表示されます。
+
+#### 3. デスクトップ環境
+
+GNOME テーマや snap アプリの設定は [こちら](.bin/ubuntu/README.md) を参照してください。WSL2 では不要です。
