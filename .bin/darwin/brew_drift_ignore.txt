@@ -1,0 +1,16 @@
+# 週次の反映漏れチェック (.bin/darwin/brew_drift.sh) で無視するもの。
+#
+# 形式: <種別>:<キー>     種別は tap / brew / cask / mas
+#       mas はアプリ名が変わりうるので App Store の id を書く
+#       # 以降はコメント
+#
+# 「実機に入っているが、dotfiles で管理する必要はない」ものをここに書くと、
+# 週次チェックが毎回同じものを拾って PR を作るのを防げる。
+
+# ---- Apple 純正アプリ ----
+# 新しい Mac にも最初から入るため、Brewfile で管理しない
+mas:408981434    # iMovie
+mas:409183694    # Keynote
+mas:409201541    # Pages
+mas:409203825    # Numbers
+mas:682658836    # GarageBand
