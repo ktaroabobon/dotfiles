@@ -5,13 +5,15 @@ pass_count=0
 fail_count=0
 
 # Helper function to print test result
+# 注: カウンタは `((c++))` ではなく算術代入で増やす。`((c++))` は c=0 のとき
+# 算術結果 0 のため終了ステータス 1 を返し、呼び出し側の判定を狂わせる。
 print_result() {
     if [[ $1 -eq 0 ]]; then
         echo "[PASS] $2"
-        ((pass_count++))
+        pass_count=$((pass_count + 1))
     else
         echo "[FAIL] $2"
-        ((fail_count++))
+        fail_count=$((fail_count + 1))
     fi
 }
 
@@ -65,8 +67,9 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     print_result $? "make installation"
 
     # Test if make-guile installation is successful
+    # 注: `apt show` は未インストールでもカタログに存在すれば 0 を返すため使わない
     echo "Running test for make-guile installation"
-    apt show make-guile >/dev/null 2>&1
+    dpkg -s make-guile >/dev/null 2>&1
     print_result $? "make-guile installation"
 
     # Test if vi (vim) installation is successful
@@ -108,3 +111,6 @@ echo "----------------------------------------"
 echo "Total tests: $((pass_count + fail_count))"
 echo "Passed: $pass_count"
 echo "Failed: $fail_count"
+
+# 失敗を終了コードで返す（これが無いと CI から呼んでも常に成功扱いになる）
+[[ $fail_count -eq 0 ]] || exit 1

@@ -1,0 +1,201 @@
+name: Ubuntu
+
+# Ubuntu 24.04 (WSL2) 向けのセットアップを検証する。
+#
+# WSL2 そのものは GitHub Actions では再現できないため、このワークフローは
+# 「Ubuntu 24.04 のユーザー空間として dotfiles が通るか」を検証する位置づけ。
+# systemd / GNOME / snap / tailnet 参加など WSL2・実機固有の部分は
+# .bin/ubuntu/README.md の手順に委ねる。
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    # 既定の `bash -e` は pipefail が無く、パイプの先頭で落ちても成功扱いになる
+    shell: bash -euo pipefail {0}
+
+jobs:
+  lint:
+    name: Lint (shell / Makefile)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: zsh を導入する
+      # ubuntu-24.04 ランナーに zsh はプリインストールされていない
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq zsh
+
+    - name: シェルスクリプトの構文チェック
+      # zsh 用のスクリプトは zsh -n、それ以外は bash -n で見る
+      run: |
+        status=0
+        while IFS= read -r f; do
+          case "$(head -1 "$f")" in
+            *zsh*) zsh -n "$f" || status=1 ;;
+            *)     bash -n "$f" || status=1 ;;
+          esac
+        done < <(git ls-files '*.sh')
+        # shebang を持たない共有スクリプト
+        zsh -n .bin/shared/hictl.zsh || status=1
+        exit $status
+
+    - name: shellcheck
+      # 大半のスクリプトが #!/bin/zsh のため -s bash を強制する
+      # (指定しないと SC1071 で解析自体が拒否される)。
+      # まずは error のみをゲートにし、warning は段階的に潰していく。
+      run: |
+        shellcheck --version
+        git ls-files '*.sh' -z | xargs -0 shellcheck -s bash --severity=error
+
+    - name: Makefile が参照するスクリプトの実在と実行権限
+      run: |
+        status=0
+        while IFS= read -r s; do
+          if [ ! -x "$s" ]; then
+            echo "::error file=Makefile::$s が存在しないか実行権限がありません"
+            status=1
+          fi
+        done < <(grep -oE '(\.bin|test)/[A-Za-z0-9_/.-]+\.sh' Makefile | sort -u)
+        exit $status
+
+    - name: Tailscale の apt リポジトリが codename に追従しているか
+      # .bin/ubuntu/tailscale.sh と同じ組み立てで URL を確認する。
+      # Ubuntu を上げたとき、配布物が無い codename を掴むのを事前に検出する。
+      run: |
+        CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+        echo "codename: $CODENAME"
+        curl -fsSI "https://pkgs.tailscale.com/stable/ubuntu/${CODENAME}.noarmor.gpg" -o /dev/null
+        curl -fsSI "https://pkgs.tailscale.com/stable/ubuntu/${CODENAME}.tailscale-keyring.list" -o /dev/null
+
+  setup:
+    name: Setup (ubuntu:24.04)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # ランナー直上ではなく素の 24.04 コンテナで回す。
+    #  - ランナーイメージは Homebrew / node / python が同梱された魔改造環境で、
+    #    WSL2 の rootfs とはかけ離れている
+    #  - ランナー直上の `apt upgrade -y` は grub / needrestart で詰む既知の問題がある
+    #  - コンテナには systemd が無く、WSL2 の既定 (systemd=false) と条件が揃う
+    container:
+      image: ubuntu:24.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    steps:
+    - name: コンテナのブートストラップ
+      # 素の ubuntu:24.04 には sudo も git も zsh も無い。
+      # git は checkout より前に入れる (無いと tarball 展開にフォールバックし
+      # .git が作られない)。make / curl / locale 類は init.sh の責務なので入れない。
+      run: |
+        apt-get update -qq
+        apt-get install -y -qq sudo zsh git curl ca-certificates
+        useradd -m -s /bin/bash tester
+        echo 'tester ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/tester
+        chmod 0440 /etc/sudoers.d/tester
+
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: ワークスペースを非 root ユーザーに渡す
+      # 以降 tester で実行する。root のままだと WSL2 の実利用と条件が変わる
+      run: chown -R tester:tester "$GITHUB_WORKSPACE"
+
+    - name: init.sh を実行する
+      run: |
+        sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && ./.bin/init.sh" \
+          | tee "$RUNNER_TEMP/init-1.log"
+
+    - name: init.sh が最後まで到達したか
+      # `exec zsh` がガードされずに残ると、ここより手前でプロセスが置き換わる
+      run: grep -q 'End init.sh' "$RUNNER_TEMP/init-1.log"
+
+    - name: test_init.sh を実行する
+      run: sudo -u tester -H zsh "$GITHUB_WORKSPACE/test/test_init.sh"
+
+    - name: ログインシェルが zsh になっているか
+      # 対象ユーザーを省いた chsh は root 側を書き換えてしまうため、tester を見る
+      run: |
+        shell=$(getent passwd tester | cut -d: -f7)
+        echo "tester login shell: $shell"
+        [ "$shell" = "$(command -v zsh)" ]
+
+    - name: init.sh を再実行しても壊れないか (冪等性)
+      run: |
+        sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && ./.bin/init.sh" \
+          | tee "$RUNNER_TEMP/init-2.log"
+        grep -q 'End init.sh' "$RUNNER_TEMP/init-2.log"
+        sudo -u tester -H zsh "$GITHUB_WORKSPACE/test/test_init.sh"
+        # oh-my-zsh の再インストールで .zshrc が作り直されていないこと
+        [ "$(sudo -u tester -H bash -c 'grep -c "^ZSH_THEME=\"agnoster\"" ~/.zshrc')" -eq 1 ]
+        [ "$(sudo -u tester -H bash -c 'grep -c "^export SHELL=" ~/.zshrc')" -eq 1 ]
+
+    - name: make link-ubuntu を実行する
+      run: sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && make link-ubuntu"
+
+    - name: hictl.zsh が symlink として配られているか
+      run: |
+        sudo -u tester -H bash -c '[ -L ~/.zsh/hictl.zsh ] && [ -e ~/.zsh/hictl.zsh ]'
+        link=$(sudo -u tester -H bash -c 'readlink ~/.zsh/hictl.zsh')
+        echo "link target: $link"
+        [ "$link" = "$GITHUB_WORKSPACE/.bin/shared/hictl.zsh" ]
+
+    - name: link-ubuntu が rc へ二重に追記しないか (冪等性)
+      run: |
+        sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && make link-ubuntu"
+        for rc in .zshrc .bashrc; do
+          n=$(sudo -u tester -H bash -c "grep -c 'source ~/.zsh/hictl.zsh' ~/$rc")
+          echo "$rc: $n"
+          [ "$n" -eq 1 ]
+        done
+
+    - name: link-ubuntu がリポジトリを汚していないか
+      run: |
+        cd "$GITHUB_WORKSPACE"
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "::error::セットアップ後に作業ツリーが変更されています"
+          git status --porcelain
+          exit 1
+        fi
+
+    - name: hictl がロードでき、ローカル分岐でエラーを返すか
+      run: |
+        sudo -u tester -H zsh -c 'source ~/.zsh/hictl.zsh && type hictl'
+        # 常駐ホスト自身として振る舞わせ、リポジトリが無いときに 1 を返すことを見る
+        if sudo -u tester -H zsh -c 'source ~/.zsh/hictl.zsh
+             HOME_INFRA_HOST="$(hostname -s)" HOME_INFRA_REPO=/nonexistent hictl status'; then
+          echo "::error::hictl がリポジトリ不在でも成功を返しています"
+          exit 1
+        fi
+
+    - name: tailscale.sh を実行する (tailnet には参加しない)
+      # apt リポジトリ登録とインストールまで。`tailscale up` は認証が要るので行わない。
+      # systemctl が無い環境でも set -eu のまま完走することの回帰テストも兼ねる。
+      run: |
+        sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && .bin/ubuntu/tailscale.sh"
+        tailscale version
+
+    - name: tailscale.sh を再実行しても sudo を呼ばずに済むか (冪等性)
+      run: |
+        sudo -u tester -H bash -c "cd '$GITHUB_WORKSPACE' && .bin/ubuntu/tailscale.sh" \
+          | tee "$RUNNER_TEMP/tailscale-2.log"
+        grep -q '導入済み' "$RUNNER_TEMP/tailscale-2.log"
