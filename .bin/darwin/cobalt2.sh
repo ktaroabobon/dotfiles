@@ -101,36 +101,13 @@ fi
 
 #====================================================================================================
 #
-# Install Powerline
-#
-#====================================================================================================
-
-echo "Installing Powerline..."
-
-# Check if pip is installed
-if ! command -v pip &> /dev/null && ! command -v pip3 &> /dev/null; then
-  echo "Error: pip is not installed. Please install pip first."
-  exit 1
-fi
-
-# Install powerline-status
-PIP_CMD="pip"
-if command -v pip3 &> /dev/null; then
-  PIP_CMD="pip3"
-fi
-
-echo "Installing powerline-status..."
-$PIP_CMD install --user powerline-status
-
-if [ $? -eq 0 ]; then
-  echo "Successfully installed powerline-status"
-else
-  echo "Warning: Failed to install powerline-status"
-fi
-
-#====================================================================================================
-#
 # Install Powerline Fonts
+#
+# 注: 以前はここで pip install --user powerline-status もしていたが、
+#     cobalt2 は zsh のテーマファイルで、必要なのは Powerline patched font だけ。
+#     powerline-status (Python 製のステータスライン) はテーマからも .zshrc からも
+#     参照されていない。加えて PEP 668 により、Homebrew の Python では
+#     `pip install --user` が externally-managed-environment で失敗する。
 #
 #====================================================================================================
 
