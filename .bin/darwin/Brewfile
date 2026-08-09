@@ -133,4 +133,6 @@ cask "session-manager-plugin"
 # Database / Viewer
 cask "pgadmin4"
 cask "qview"
-cask "orca"
+# tap 付きはフルネームで書く（`brew bundle dump` の表記に合わせ、
+# 週次の反映漏れチェックが毎回差分として拾わないようにする）
+cask "stablyai/orca/orca"

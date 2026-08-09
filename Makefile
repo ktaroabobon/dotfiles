@@ -14,6 +14,9 @@ help:
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
 	@echo "  zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
+	@echo "  brew-drift : 実機に入っていて Brewfile に無いものを表示します。(macOS)"
+	@echo "  brew-drift-pr : 上記の差分から draft PR を作ります。(macOS)"
+	@echo "  brew-drift-install : 週次チェックを launchd に登録します。(macOS)"
 	@echo ""
 	@echo "注意事項:"
 	@echo "  - ターゲットを指定しない場合、help ターゲットが実行されます。"
@@ -86,6 +89,35 @@ ssh-key:
 .PHONY: zoom-bg
 zoom-bg:
 	.bin/darwin/zoom_backgrounds.sh
+
+# ------------------------------------------------------------------------------
+# Brewfile の反映漏れチェック (macOS)
+# 実機の状態を見る必要があるため CI では回せない。週次実行は launchd に任せる。
+
+# 実機に入っていて Brewfile に無いものを表示する（差分があれば exit 1）
+.PHONY: brew-drift
+brew-drift:
+	.bin/darwin/brew_drift.sh
+
+# 差分があればブランチを切って draft PR を作る
+.PHONY: brew-drift-pr
+brew-drift-pr:
+	.bin/darwin/brew_drift.sh --pr
+
+# 週次チェック（毎週月曜 10:00）を launchd に登録する
+.PHONY: brew-drift-install
+brew-drift-install:
+	.bin/darwin/brew_drift_launchd.sh install
+
+# 週次チェックの登録を解除する
+.PHONY: brew-drift-uninstall
+brew-drift-uninstall:
+	.bin/darwin/brew_drift_launchd.sh uninstall
+
+# 週次チェックの登録状態を表示する
+.PHONY: brew-drift-status
+brew-drift-status:
+	.bin/darwin/brew_drift_launchd.sh status
 
 # ------------------------------------------------------------------------------
 # Test environment related commands and comments
