@@ -179,6 +179,11 @@ if [ -f ~/.zsh/ghw.zsh ]; then
   source ~/.zsh/ghw.zsh
 fi
 
+# home-infra control CLI（tailnet 越しに常駐ホストの hictl を叩く）
+if [ -f ~/.zsh/hictl.zsh ]; then
+  source ~/.zsh/hictl.zsh
+fi
+
 eval "$(mise activate zsh)"
 
 export PATH="$HOME/.dotnet:$PATH"
