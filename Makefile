@@ -6,7 +6,8 @@ help:
 	@echo "  all       : 初期化、brew、link、defaults、cobalt2 の順で実行します。"
 	@echo "  init      : 初期化スクリプトを実行します。"
 	@echo "  brew      : brew スクリプトを実行します。"
-	@echo "  link      : link スクリプトを実行します。"
+	@echo "  link      : link スクリプトを実行します。(macOS)"
+	@echo "  link-ubuntu : Ubuntu / WSL2 向けのリンクを実行します。"
 	@echo "  defaults  : defaults スクリプトを実行します。"
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
@@ -49,6 +50,10 @@ brew:
 .PHONY: link
 link:
 	.bin/darwin/link.sh
+
+.PHONY: link-ubuntu
+link-ubuntu:
+	.bin/ubuntu/link.sh
 
 .PHONY: defaults
 defaults:

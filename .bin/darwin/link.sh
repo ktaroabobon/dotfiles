@@ -24,6 +24,17 @@ for dotfile in "${SCRIPT_DIR}"/.??*; do
   ln -fnsv "$dotfile" "$HOME"
 done
 
+# 共有スクリプト（プラットフォーム非依存）を ~/.zsh へリンクする。
+# darwin/.zsh は上のループでディレクトリごとリンクされるため、その中身とは別に
+# .bin/shared/ を明示的に配る。
+SHARED_DIR="$(cd "${SCRIPT_DIR}/../shared" && pwd)"
+if [ -d "$SHARED_DIR" ]; then
+  mkdir -p "$HOME/.zsh"
+  for shared in "$SHARED_DIR"/*; do
+    [ -e "$shared" ] && ln -fnsv "$shared" "$HOME/.zsh/$(basename "$shared")"
+  done
+fi
+
 # Claude Code 設定の個別リンク。
 # $HOME/.claude/ は実体ディレクトリのまま残し、管理対象だけシンボリックリンクに差し替える。
 CLAUDE_SRC="${SCRIPT_DIR}/.claude"
