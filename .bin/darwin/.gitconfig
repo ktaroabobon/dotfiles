@@ -25,3 +25,7 @@
     df = diff
     lg = log
     br = branch
+
+# マシンごとのローカル設定。存在しない環境では無視される。
+[include]
+    path = ~/.config/git/local
