@@ -139,3 +139,9 @@ cask "qview"
 # tap 付きはフルネームで書く（`brew bundle dump` の表記に合わせ、
 # 週次の反映漏れチェックが毎回差分として拾わないようにする）
 cask "stablyai/orca/orca"
+
+# ---- 反映漏れ（2026-08-17 の自動検出）----
+# make brew-drift が実機との差分として拾ったもの。
+# 上のカテゴリへの振り分けと、そもそも管理対象にするかの判断は手動で行う。
+# 管理したくないものは .bin/darwin/brew_drift_ignore.txt に足すと次回から出ない。
+mas "Microsoft Outlook", id: 985367838
