@@ -146,6 +146,21 @@ make link
 make defaults
 ```
 
+#### 5. MX Ergo Sの左右チルトをログイン後に復旧
+
+`KeitaronoMacBook-Pro`では、ログイン直後にMosがLogitech HID++のボタン入力を受け取れず、MX Ergo Sの左右チルトが効かない場合があります。次のコマンドで、ログイン後にMosを再起動して設定画面をバックグラウンド表示するLaunchAgentを登録できます。
+
+```sh
+make mos-refresh-install
+```
+
+```sh
+make mos-refresh-status      # 登録状態を確認
+make mos-refresh-uninstall   # 登録を解除
+```
+
+実行スクリプト自身もLocalHostNameを確認するため、ほかのMacでは動作しません。ログは`~/Library/Logs/mos-startup-refresh.log`に出力されます。
+
 ### Ubuntu / WSL2
 
 #### 1. 自動セットアップ
