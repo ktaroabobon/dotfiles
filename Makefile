@@ -18,6 +18,7 @@ help:
 	@echo "  brew-drift : 実機に入っていて Brewfile に無いものを表示します。(macOS)"
 	@echo "  brew-drift-pr : 上記の差分から draft PR を作ります。(macOS)"
 	@echo "  brew-drift-install : 週次チェックを launchd に登録します。(macOS)"
+	@echo "  mos-refresh-install : Mos の Logitech HID++ 接続復旧をログイン時に実行します。(対象Macのみ)"
 	@echo ""
 	@echo "注意事項:"
 	@echo "  - ターゲットを指定しない場合、help ターゲットが実行されます。"
@@ -125,6 +126,21 @@ brew-drift-uninstall:
 .PHONY: brew-drift-status
 brew-drift-status:
 	.bin/darwin/brew_drift_launchd.sh status
+
+# ------------------------------------------------------------------------------
+# Mos / MX Ergo S のログイン後 HID++ 接続復旧（対象Macのみ）
+
+.PHONY: mos-refresh-install
+mos-refresh-install:
+	.bin/darwin/mos_startup_refresh_launchd.sh install
+
+.PHONY: mos-refresh-uninstall
+mos-refresh-uninstall:
+	.bin/darwin/mos_startup_refresh_launchd.sh uninstall
+
+.PHONY: mos-refresh-status
+mos-refresh-status:
+	.bin/darwin/mos_startup_refresh_launchd.sh status
 
 # ------------------------------------------------------------------------------
 # Test environment related commands and comments
