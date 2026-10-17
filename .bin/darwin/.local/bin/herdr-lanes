@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# herdr-lanes: 今の workspace に新しい tab を作り、2x2 の 4 pane で Claude Code を起動する。
+#
+# 使い方:
+#   herdr-lanes                 # cwd で 4 レーン(同じディレクトリを 4 人で触る)
+#   herdr-lanes --worktree      # レーンごとに git worktree を切って起動(衝突しない並行作業向け)
+#   herdr-lanes -n 2            # 2 レーン(左右)だけ
+#   herdr-lanes -l "bt-3300"    # tab 名を指定
+set -euo pipefail
+
+if ! herdr workspace list >/dev/null 2>&1; then
+  echo "herdr の server に接続できません" >&2
+  exit 1
+fi
+
+lanes=4
+label="lanes"
+use_worktree=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -n) lanes="$2"; shift 2 ;;
+    -l) label="$2"; shift 2 ;;
+    --worktree) use_worktree=1; shift ;;
+    -h|--help) sed -n '2,9p' "$0"; exit 0 ;;
+    *) echo "unknown option: $1" >&2; exit 2 ;;
+  esac
+done
+
+# pane 内から叩いたときはその pane、キーバインド経由(shell 型 command)ではフォーカス中の pane を基準にする
+if [ -n "${HERDR_WORKSPACE_ID:-}" ]; then
+  ws="$HERDR_WORKSPACE_ID"
+  cwd="$PWD"
+else
+  ws=$(herdr workspace list | jq -r '.result.workspaces[] | select(.focused) | .workspace_id')
+  cwd=$(herdr pane list --workspace "$ws" | jq -r '.result.panes[] | select(.focused) | .foreground_cwd // .cwd')
+fi
+
+# レーン i の作業ディレクトリ。--worktree なら ~/.herdr/worktrees/<repo>/ に git worktree を切る。
+# herdr worktree create は worktree ごとに workspace を作るので、1 画面に並べる用途では git を直接使う。
+lane_cwd() {
+  local i="$1"
+  if [ "$use_worktree" = 1 ]; then
+    local repo branch path
+    repo=$(basename "$(git -C "$cwd" rev-parse --show-toplevel)")
+    branch="lane/${label}-${i}-$(date +%m%d%H%M)"
+    path="$HOME/.herdr/worktrees/$repo/${branch//\//-}"
+    git -C "$cwd" worktree add -q -b "$branch" "$path" >&2
+    echo "$path"
+  else
+    echo "$cwd"
+  fi
+}
+
+root=$(herdr tab create --workspace "$ws" --cwd "$(lane_cwd 1)" --label "$label" --focus \
+  | jq -r '.result.root_pane.pane_id')
+panes=("$root")
+
+split() { # split <pane> <direction> <cwd>
+  herdr pane split "$1" --direction "$2" --cwd "$3" --no-focus | jq -r '.result.pane.pane_id'
+}
+
+# 縦長のレーンを横に並べる。右端を割り続けると幅が偏るので、毎回「一番広い pane」を等分する順で割る。
+#   2 列: [1|2]   3 列: [1|3|2] → 並べ替え   4 列: [1|3|2|4]
+if [ "$lanes" -ge 2 ]; then p2=$(split "$root" right "$(lane_cwd 2)"); fi
+if [ "$lanes" -ge 3 ]; then p3=$(split "$root" right "$(lane_cwd 3)"); fi
+if [ "$lanes" -ge 4 ]; then p4=$(split "$p2" right "$(lane_cwd 4)"); fi
+# 左から順に l1..l4 になるよう配列を組む
+case "$lanes" in
+  1) ;;
+  2) panes+=("$p2") ;;
+  3) panes+=("$p3" "$p2") ;;
+  *) panes+=("$p3" "$p2" "$p4") ;;
+esac
+
+# 並び: 左から 1..4。agent 名は l1..l4(herdr agent prompt l2 "..." で外から指示できる)
+# 新しい pane はログインシェルの起動中だと agent_pane_busy で弾かれるので、プロンプトが出るまで再試行する
+start_lane() { # start_lane <name> <pane>
+  local n
+  for n in $(seq 1 30); do
+    if out=$(herdr agent start "$1" --kind claude --pane "$2" 2>&1); then return 0; fi
+    case "$out" in *agent_pane_busy*) sleep 0.5 ;; *) echo "$out" >&2; return 1 ;; esac
+  done
+  echo "$1: シェルの準備待ちでタイムアウトしました ($2)" >&2
+  return 1
+}
+
+i=1
+for p in "${panes[@]}"; do
+  start_lane "l$i" "$p" &
+  i=$((i + 1))
+done
+wait
+echo "started ${#panes[@]} lanes in tab '$label': ${panes[*]}"

@@ -43,11 +43,11 @@ check() {
 }
 
 echo "--- ホーム直下のドットファイル ---"
-# .claude / .codex / .zsh はディレクトリごとではなく中身を個別にリンクする
+# .claude / .codex / .zsh / .config / .local はディレクトリごとではなく中身を個別にリンクする
 for f in "$DARWIN_DIR"/.??*; do
   base=$(basename "$f")
   case "$base" in
-    .git | .DS_Store | .claude | .codex | .zsh) continue ;;
+    .git | .DS_Store | .claude | .codex | .zsh | .config | .local) continue ;;
   esac
   check "$HOME/$base" "$f"
 done
@@ -84,6 +84,21 @@ fi
 for f in "$DARWIN_DIR/.codex/rules"/*; do
   [ -e "$f" ] || continue
   check "$HOME/.codex/rules/$(basename "$f")" "$f"
+done
+
+echo
+echo "--- ~/.config (herdr / Ghostty など) ---"
+if [ -d "$DARWIN_DIR/.config" ]; then
+  while IFS= read -r f; do
+    check "$HOME/${f#"$DARWIN_DIR"/}" "$f"
+  done < <(find "$DARWIN_DIR/.config" -type f ! -name .DS_Store)
+fi
+
+echo
+echo "--- ~/.local/bin ---"
+for f in "$DARWIN_DIR/.local/bin"/*; do
+  [ -f "$f" ] || continue
+  check "$HOME/.local/bin/$(basename "$f")" "$f"
 done
 
 echo

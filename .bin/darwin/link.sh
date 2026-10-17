@@ -16,12 +16,15 @@ SCRIPT_DIR=$(
 # .claude / .codex は実マシン側に動的データ (sessions/, history.jsonl, sqlite 等) を
 # 持つため、ここではディレクトリ単位でリンクせず、後段で個別リンクする。
 # .zsh も同様に個別リンクする（理由は下記）。
+# .config / .local はほかのアプリの実データも入るため、管理対象のファイルだけを後段で個別リンクする。
 for dotfile in "${SCRIPT_DIR}"/.??*; do
   [[ "$dotfile" == "${SCRIPT_DIR}/.git" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.DS_Store" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.claude" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.codex" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.zsh" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.config" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.local" ]] && continue
 
   ln -fnsv "$dotfile" "$HOME"
 done
@@ -87,6 +90,24 @@ if [ -d "$CODEX_SRC" ]; then
   # rules/ 配下のファイル
   for rule in "$CODEX_SRC/rules"/*; do
     [ -e "$rule" ] && ln -fnsv "$rule" "$HOME/.codex/rules/$(basename "$rule")"
+  done
+fi
+
+# ~/.config 配下(herdr / Ghostty など)の個別リンク。
+# ~/.config/<app>/ は実体ディレクトリのまま残し、管理対象のファイルだけを差し替える。
+if [ -d "${SCRIPT_DIR}/.config" ]; then
+  find "${SCRIPT_DIR}/.config" -type f ! -name .DS_Store | while read -r f; do
+    rel="${f#${SCRIPT_DIR}/}"
+    mkdir -p "$HOME/$(dirname "$rel")"
+    ln -fnsv "$f" "$HOME/$rel"
+  done
+fi
+
+# ~/.local/bin 配下の自作スクリプト(herdr-lanes など)
+if [ -d "${SCRIPT_DIR}/.local/bin" ]; then
+  mkdir -p "$HOME/.local/bin"
+  for f in "${SCRIPT_DIR}/.local/bin"/*; do
+    [ -f "$f" ] && ln -fnsv "$f" "$HOME/.local/bin/$(basename "$f")"
   done
 fi
 

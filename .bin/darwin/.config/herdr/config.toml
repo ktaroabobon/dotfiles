@@ -1,0 +1,38 @@
+onboarding = false
+[ui]
+agent_panel_sort = "spaces"
+
+show_agent_labels_on_pane_borders = true
+status_indicators = "symbols"
+# 縦長 4 レーンの幅を稼ぐため、起動時はサイドバーを畳む(prefix+b で開閉)
+sidebar_start_collapsed = true
+[keys]
+prefix = "ctrl+t"
+next_tab = "ctrl+]"
+previous_tab = "ctrl+["
+# レーン移動を prefix なしで(Ghostty / Claude Code と衝突しない ctrl+alt+矢印)
+focus_pane_left = "ctrl+alt+left"
+focus_pane_right = "ctrl+alt+right"
+focus_pane_up = "ctrl+alt+up"
+focus_pane_down = "ctrl+alt+down"
+# 1 レーンを一時的に全画面化 / 戻す
+zoom = "ctrl+alt+z"
+# 次の「要対応」エージェントへ飛ぶ(blocked / done を順に巡回)
+next_agent = "ctrl+alt+n"
+previous_agent = "ctrl+alt+p"
+# サイドバーの n 番目のエージェントへ直接
+focus_agent = "prefix+alt+1..9"
+# 1 枚だけの普通の tab(prefix+c は 4 レーンに使う)
+new_tab = "prefix+shift+c"
+
+# ---- 4 レーン運用向け(2026-10-17 追加。元は config.toml.bak-20261017) ----
+
+# 新しいセッション = 縦長 4 レーンの tab(herdr-lanes スクリプト)
+[[keys.command]]
+key = "prefix+c"
+type = "shell"
+command = "~/.local/bin/herdr-lanes"
+
+[ui.toast]
+# 裏のレーンが終わった / 承認待ちになったら macOS 通知
+delivery = "system"

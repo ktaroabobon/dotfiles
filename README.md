@@ -89,7 +89,17 @@ source ~/.zshrc
 
 `auth.json` などの認証情報、`sessions/`、`history.jsonl`、`logs_*.sqlite`、`state_*.sqlite`、`automations/` などの動的データやマシン固有データはリポジトリの管理対象外です。
 
-##### 2.5 設定の確認
+##### 2.5 herdr / Ghostty 設定
+
+`make link` 実行時に、`.bin/darwin/.config/` 配下のファイルが `$HOME/.config/` に、`.bin/darwin/.local/bin/` 配下のスクリプトが `$HOME/.local/bin/` に、それぞれ個別シンボリックリンクとして配置されます。
+
+- `.config/herdr/config.toml`: herdr のキーバインド、通知、サイドバーの設定。
+- `.config/ghostty/config`: Ghostty の設定。
+- `.local/bin/herdr-lanes`: 今の workspace に縦長 4 レーンの tab を作り、各レーンで Claude Code を起動する。herdr では `ctrl+t` → `c` で起動する。
+
+`$HOME/.config/` と `$HOME/.config/<アプリ>/` は実体ディレクトリのまま残ります。ほかのアプリの設定やログは管理対象外です。
+
+##### 2.6 設定の確認
 
 新しいターミナルを開いて、以下が正しく表示されることを確認:
 
