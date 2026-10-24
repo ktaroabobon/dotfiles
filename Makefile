@@ -15,7 +15,8 @@ help:
 	@echo "  cobalt2   : cobalt2 テーマのセットアップを実行します。"
 	@echo "  ssh-key   : ed25519 鍵を生成し、公開鍵をクリップボードにコピーします。"
 	@echo "  zoom-bg   : Zoom バーチャル背景画像を一括ダウンロードします。"
-	@echo "  brew-drift : 実機に入っていて Brewfile に無いものを表示します。(macOS)"
+	@echo "  claude-launcher : Claude をアカウントを選んで開くランチャーを作ります。(macOS)"
+	@echo "  brew-drift :実機に入っていて Brewfile に無いものを表示します。(macOS)"
 	@echo "  brew-drift-pr : 上記の差分から draft PR を作ります。(macOS)"
 	@echo "  brew-drift-install : 週次チェックを launchd に登録します。(macOS)"
 	@echo ""
@@ -96,6 +97,11 @@ ssh-key:
 .PHONY: zoom-bg
 zoom-bg:
 	.bin/darwin/zoom_backgrounds.sh
+
+# Claude デスクトップアプリをアカウントを選んで開くランチャーを ~/Applications に作る
+.PHONY: claude-launcher
+claude-launcher:
+	.bin/darwin/claude_launcher.sh
 
 # ------------------------------------------------------------------------------
 # Brewfile の反映漏れチェック (macOS)
