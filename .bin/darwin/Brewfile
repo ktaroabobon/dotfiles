@@ -95,7 +95,7 @@ mas "Sequel Ace",   id: 1518036000
 # ---- GUI apps via Cask (App Store に無いもの) ----
 # Browsers
 cask "google-chrome"
-cask "arc"
+cask "vivaldi"
 
 # Communication
 cask "discord"
