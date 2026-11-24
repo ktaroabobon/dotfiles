@@ -17,12 +17,17 @@ expand_home() {
   esac
 }
 
-# 1 行に「<境目のディレクトリ>\t<include 先のファイル>」
+# 1 行に「<境目のディレクトリ>\t<include 先のファイル>」。
+# 実行した場所は pwd -P(シンボリックリンクを解いたパス)で比べるので、境目も実在すれば解いておく。
 list_profiles() {
   git config --global --includes --type=path --get-regexp '^includeif\.gitdir:.*/\.path$' 2>/dev/null |
     while read -r key include_file; do
       prefix=${key#includeif.gitdir:}
-      printf '%s\t%s\n' "$(expand_home "${prefix%.path}")" "$include_file"
+      prefix=$(expand_home "${prefix%.path}")
+      if resolved=$(cd "$prefix" 2>/dev/null && pwd -P); then
+        prefix=$resolved/
+      fi
+      printf '%s\t%s\n' "$prefix" "$include_file"
     done
 }
 

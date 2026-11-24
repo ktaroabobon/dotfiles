@@ -16,8 +16,11 @@ trap 'rm -rf "$work"' EXIT
 home="$work/home"
 real_bin="$work/real-bin"
 profile_bin="$home/.local/profile-bin"
+# ~/workspace をシンボリックリンクにして、境目のパスと実行した場所(pwd -P)の
+# 書き方が違っても一致することを確かめる(macOS の一時ディレクトリも /private/var へのリンク)
 mkdir -p "$home/.config/git" "$profile_bin" "$real_bin" \
-  "$home/workspace/work/repo" "$home/workspace/personal/repo"
+  "$work/real-workspace/work/repo" "$work/real-workspace/personal/repo"
+ln -s "$work/real-workspace" "$home/workspace"
 
 cat > "$home/.gitconfig" <<'EOF'
 [include]
