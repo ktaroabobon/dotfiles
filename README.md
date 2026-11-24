@@ -155,7 +155,40 @@ make claude-launcher
 - Dock から起動したアプリはシェルの環境変数を引き継ぎません。そのため、会話履歴などの場所はランチャーが起動時に明示的に渡します。設定の変更は、そのアカウントのアプリを次に起動したときから適用されます。
 - 2 つのアプリで同じアカウントにログインしないでください。Projects が読み込めなくなったという報告があります。
 
-#### 5. 個別実行（トラブルシューティング用）
+#### 5. フォルダごとにアカウントを切り替える
+
+`~/workspace/<仕事>/` の下でだけ、git・`gh`・`claude`・`aws` などを仕事用のアカウントで動かします。境目は git の `includeIf` の 1 か所にだけ書き、`gh` などはラッパーが同じ境目を見て切り替えます。
+
+| 何を | どこで |
+| --- | --- |
+| 境目 | `~/.config/git/local` の `[includeIf "gitdir:~/workspace/<仕事>/"]`(`.gitconfig` から読む) |
+| git の名前・メール・SSH 鍵 | include 先(例: `~/.config/git/config-<仕事>`)の `[user]` と `[core] sshCommand` |
+| `gh` などに渡す環境変数 | 同じ include 先の `[profile] env = KEY=値`(1 行に 1 つ) |
+| 包むコマンドの一覧 | [.bin/darwin/.local/profile-bin/tools](.bin/darwin/.local/profile-bin/tools) |
+| 切り替えの処理 | [.bin/darwin/.local/profile-bin/_profile-wrapper](.bin/darwin/.local/profile-bin/_profile-wrapper) |
+
+`~/.config/git/local` と include 先は、仕事用のメールアドレスやアカウント名を含むので、このリポジトリに入れず手元にだけ置きます。include 先の例:
+
+```ini
+[user]
+    name = <仕事用の GitHub アカウント>
+    email = <仕事用のメールアドレス>
+    useConfigOnly = true
+[core]
+    sshCommand = ssh -i ~/.ssh/id_ed25519_<仕事> -o IdentitiesOnly=yes
+[profile]
+    env = GH_CONFIG_DIR=~/.config/gh-<仕事>
+    env = CLAUDE_CONFIG_DIR=~/.claude-<仕事>
+    env = AWS_PROFILE=<仕事用の AWS プロファイル>
+```
+
+- `make link` で `~/.local/profile-bin/` に本体と、一覧の各コマンドへのリンクが作られます。コマンドを足したら一覧に書いて `make link` を実行し直してください。
+- ラッパーは実行した場所で判定するので、mise や direnv と違ってシェルが `cd` を検知しなくても切り替わります(Claude Code の Bash ツール、スクリプトの中の `cd`、リポジトリの外の `gh repo clone` など)。
+- 親から受け継いだ値は、ラッパーが前回設定したものなら決め直し、違う値なら利用者が明示したものとして残します。`AWS_PROFILE=<stg> aws ...` のように明示すれば、その値が使われます。Claude Launcher が渡す `CLAUDE_CONFIG_DIR` / `GH_CONFIG_DIR` も明示した値として扱われます。
+- 包んでいないコマンド(`python` を直接実行するなど)には渡りません。
+- `gh` の認証は、`GH_CONFIG_DIR` を指定してから `gh auth login` すると、そのフォルダに保存されます。
+
+#### 6. 個別実行（トラブルシューティング用）
 
 必要に応じて、個別のコマンドを実行できます：
 
@@ -173,7 +206,7 @@ make link
 make defaults
 ```
 
-#### 5. MX Ergo Sの左右チルトをログイン後に復旧
+#### 7. MX Ergo Sの左右チルトをログイン後に復旧
 
 `KeitaronoMacBook-Pro`では、ログイン直後にMosがLogitech HID++のボタン入力を受け取れず、MX Ergo Sの左右チルトが効かない場合があります。次のコマンドで、ログイン後にMosを再起動して設定画面をバックグラウンド表示するLaunchAgentを登録できます。
 

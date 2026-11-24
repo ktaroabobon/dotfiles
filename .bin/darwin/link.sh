@@ -16,12 +16,14 @@ SCRIPT_DIR=$(
 # .claude / .codex は実マシン側に動的データ (sessions/, history.jsonl, sqlite 等) を
 # 持つため、ここではディレクトリ単位でリンクせず、後段で個別リンクする。
 # .zsh も同様に個別リンクする（理由は下記）。
+# .local はほかのアプリの実データも入るため、管理対象のファイルだけを後段で個別リンクする。
 for dotfile in "${SCRIPT_DIR}"/.??*; do
   [[ "$dotfile" == "${SCRIPT_DIR}/.git" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.DS_Store" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.claude" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.codex" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.zsh" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.local" ]] && continue
 
   ln -fnsv "$dotfile" "$HOME"
 done
@@ -88,6 +90,21 @@ if [ -d "$CODEX_SRC" ]; then
   for rule in "$CODEX_SRC/rules"/*; do
     [ -e "$rule" ] && ln -fnsv "$rule" "$HOME/.codex/rules/$(basename "$rule")"
   done
+fi
+
+# 場所ごとにアカウント(gh / claude / aws の設定)を切り替えるラッパー。
+# ~/.local/profile-bin は実体ディレクトリとして作り、本体だけをリポジトリへリンクする。
+# 包むコマンドは本体への相対リンクにするので、リポジトリの中にはリンクを作らない。
+PROFILE_BIN_SRC="${SCRIPT_DIR}/.local/profile-bin"
+if [ -f "$PROFILE_BIN_SRC/_profile-wrapper" ]; then
+  mkdir -p "$HOME/.local/profile-bin"
+  ln -fnsv "$PROFILE_BIN_SRC/_profile-wrapper" "$HOME/.local/profile-bin/_profile-wrapper"
+  while IFS= read -r tool; do
+    case "$tool" in
+      '' | '#'*) continue ;;
+    esac
+    ln -fnsv _profile-wrapper "$HOME/.local/profile-bin/$tool"
+  done < "$PROFILE_BIN_SRC/tools"
 fi
 
 echo "End link.sh"

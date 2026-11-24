@@ -14,7 +14,7 @@ set -uo pipefail
 
 rc="${1:-}"
 if [ -z "$rc" ]; then
-  echo "usage: ${0##*/} <.zshrc|.zprofile>" >&2
+  echo "usage: ${0##*/} <.zshrc|.zprofile|.zshenv>" >&2
   exit 2
 fi
 
