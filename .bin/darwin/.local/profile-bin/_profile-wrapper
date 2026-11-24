@@ -1,0 +1,107 @@
+#!/bin/sh
+# 包んだツール（このファイルへのシンボリックリンクの名前）を、実行した場所のプロファイルの環境変数で起動する。
+#
+# 境目は git の includeIf "gitdir:<dir>/" をそのまま使う。include 先の profile.env（KEY=値。複数行可）が
+# そのプロファイルの環境変数。どのプロファイルにも当たらない場所では、それらの変数を消す。
+# 親から受け継いだ値はこのラッパーが前回設定したもの（_PROFILE_SET_<KEY> と同じ値）なら古い値として
+# 決め直し、違う値なら利用者が明示したものとして残す（AWS_PROFILE=<stg> aws ... を上書きしないため）。
+# macOS の /bin/sh（bash 3.2）は $( ) の中の case を誤って解釈するので、case は関数の中にだけ書く。
+
+tool=${0##*/}
+tab=$(printf '\t')
+
+expand_home() {
+  case $1 in
+    "~/"*) printf '%s\n' "$HOME/${1#"~/"}" ;;
+    *) printf '%s\n' "$1" ;;
+  esac
+}
+
+# 1 行に「<境目のディレクトリ>\t<include 先のファイル>」
+list_profiles() {
+  git config --global --includes --type=path --get-regexp '^includeif\.gitdir:.*/\.path$' 2>/dev/null |
+    while read -r key include_file; do
+      prefix=${key#includeif.gitdir:}
+      printf '%s\t%s\n' "$(expand_home "${prefix%.path}")" "$include_file"
+    done
+}
+
+is_under() {
+  case $1 in
+    "$2"*) return 0 ;;
+  esac
+  return 1
+}
+
+is_var_name() {
+  case $1 in
+    '' | [0-9]* | *[!A-Za-z0-9_]*) return 1 ;;
+  esac
+  return 0
+}
+
+contains_word() {
+  case " $1 " in
+    *" $2 "*) return 0 ;;
+  esac
+  return 1
+}
+
+cwd=$(pwd -P)/
+active_file=
+managed=
+profiles=$(list_profiles)
+while IFS=$tab read -r prefix include_file; do
+  [ -n "$include_file" ] || continue
+  if [ -z "$active_file" ] && is_under "$cwd" "$prefix"; then
+    active_file=$include_file
+  fi
+  for entry in $(git config --file "$include_file" --get-all profile.env 2>/dev/null); do
+    name=${entry%%=*}
+    if is_var_name "$name" && ! contains_word "$managed" "$name"; then
+      managed="$managed $name"
+    fi
+  done
+done <<EOF
+$profiles
+EOF
+
+explicit=
+for name in $managed; do
+  eval "current=\${$name-} recorded=\${_PROFILE_SET_$name-}"
+  if [ -n "$current" ] && [ "$current" != "$recorded" ]; then
+    explicit="$explicit $name"
+  else
+    unset "$name"
+  fi
+  unset "_PROFILE_SET_$name"
+done
+
+if [ -n "$active_file" ]; then
+  for entry in $(git config --file "$active_file" --get-all profile.env 2>/dev/null); do
+    name=${entry%%=*}
+    is_var_name "$name" || continue
+    contains_word "$explicit" "$name" && continue
+    value=$(expand_home "${entry#*=}")
+    export "$name=$value" "_PROFILE_SET_$name=$value"
+  done
+fi
+
+# PATH の中で、このラッパー自身（同じファイルへのリンク）でない最初の同名コマンドが本物
+real=
+old_ifs=$IFS
+IFS=:
+for dir in $PATH; do
+  candidate=${dir:-.}/$tool
+  if [ -f "$candidate" ] && [ -x "$candidate" ] && ! [ "$candidate" -ef "$0" ]; then
+    real=$candidate
+    break
+  fi
+done
+IFS=$old_ifs
+
+if [ -z "$real" ]; then
+  echo "_profile-wrapper: 本物の $tool が PATH に見つからない" >&2
+  exit 127
+fi
+exec "$real" "$@"

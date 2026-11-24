@@ -1,0 +1,8 @@
+# ~/.local/profile-bin で包むコマンド(1 行に 1 つ)。
+# 足したら make link を実行し直す。どれも _profile-wrapper へのシンボリックリンクになる。
+gh
+claude
+aws
+terraform
+uv
+uvx
