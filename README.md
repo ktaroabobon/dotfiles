@@ -187,6 +187,24 @@ make claude-launcher
 - 親から受け継いだ値は、ラッパーが前回設定したものなら決め直し、違う値なら利用者が明示したものとして残します。`AWS_PROFILE=<stg> aws ...` のように明示すれば、その値が使われます。Claude Launcher が渡す `CLAUDE_CONFIG_DIR` / `GH_CONFIG_DIR` も明示した値として扱われます。
 - 包んでいないコマンド(`python` を直接実行するなど)には渡りません。
 - `gh` の認証は、`GH_CONFIG_DIR` を指定してから `gh auth login` すると、そのフォルダに保存されます。
+- 特定のコマンドだけに要る処理は、`.bin/darwin/.local/profile-bin/_<コマンド名>-<用途>` に置くと、ラッパーが本物のコマンドのパスと引数を渡して呼びます(1 つのコマンドに 1 つまで)。
+
+##### `aws sso login` のページを開く Dia のプロファイル
+
+どの組織の AWS SSO も、ブラウザに渡る URL は `oidc.<リージョン>.amazonaws.com` などの同じ形なので、Dia の Link Rules では組織を見分けられません。そこで [`_aws-sso-login-browser-profile`](.bin/darwin/.local/profile-bin/_aws-sso-login-browser-profile) が、`aws sso login` のときだけ `--no-browser` を付けて URL を受け取り、ログインする AWS プロファイルの SSO の入口(`sso_start_url`)に対応する Dia のプロファイルで開きます(Dia の AppleScript を使います)。
+
+対応表は `~/.config/aws-sso-login-browser-profile` に置きます。組織の入口を含むので、このリポジトリには入れません。1 行に「入口の URL に含まれる文字列」と「Dia のプロファイル名」を空白で区切って書きます。
+
+```text
+# 入口の URL に含まれる文字列  Dia のプロファイル名
+d-xxxxxxxxxx  仕事
+d-yyyyyyyyyy  Home Infra
+```
+
+- 対応表に無い組織、`--no-browser` を自分で付けたときは、ふだんどおり aws に任せます。
+- Dia で開けない(そのプロファイルが無いなど)ときは、既定のブラウザで開きます。
+- 初回は macOS が「ターミナルから Dia を操作してよいか」を確かめます(システム設定 → プライバシーとセキュリティ → オートメーション)。
+- Dia の AppleScript の profile は公式に説明されていないため、Dia の更新で使えなくなる可能性があります。
 
 #### 6. 個別実行（トラブルシューティング用）
 

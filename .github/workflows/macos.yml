@@ -92,6 +92,10 @@ jobs:
       # ラッパーは /bin/sh(macOS では bash 3.2)で動くため、macOS で振る舞いを確かめる
       run: test/profile_wrapper_test.sh
 
+    - name: Check aws sso login browser profile
+      if: always()
+      run: test/aws_sso_login_browser_profile_test.sh
+
     - name: Check the repository is left clean
       if: always()
       # link.sh / cobalt2.sh はホーム側のファイルを書き換えるが、link 後の
