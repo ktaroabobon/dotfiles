@@ -86,6 +86,16 @@ expect "利用者が明示した値は、境目の外でも消さない" workspa
   "AWS_PROFILE=other GH_CONFIG_DIR=unset args=s3 ls" \
   AWS_PROFILE=other
 
+# コマンドごとの後処理(_<コマンド名>-<用途>)があれば、環境変数を決めたうえで本物のパスと引数を渡す
+cat > "$profile_bin/_aws-test-purpose" <<'EOF'
+#!/bin/sh
+echo "hook real=${1##*/} AWS_PROFILE=${AWS_PROFILE:-unset} args=$2 $3"
+EOF
+chmod +x "$profile_bin/_aws-test-purpose"
+expect "後処理があればそこへ渡す" workspace/work/repo \
+  "hook real=aws AWS_PROFILE=work-dev args=s3 ls"
+rm "$profile_bin/_aws-test-purpose"
+
 actual=$(cd "$home" && env -i HOME="$home" PATH="$profile_bin:/usr/bin:/bin" "$profile_bin/terraform" 2>&1)
 code=$?
 if [ "$code" -eq 127 ] && [[ "$actual" == *"本物の terraform が PATH に見つからない"* ]]; then

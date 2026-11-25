@@ -109,4 +109,13 @@ if [ -z "$real" ]; then
   echo "_profile-wrapper: 本物の $tool が PATH に見つからない" >&2
   exit 127
 fi
+
+# そのコマンドだけに要る処理は、同じ場所の _<コマンド名>-<用途> に本物のパスと引数を渡して任せる
+# (例: _aws-sso-login-browser-profile は aws sso login のページを開く Dia のプロファイルを選ぶ)。
+# 1 つのコマンドに置くのは 1 つまで。
+for hook in "${0%/*}/_$tool-"*; do
+  if [ -f "$hook" ] && [ -x "$hook" ]; then
+    exec "$hook" "$real" "$@"
+  fi
+done
 exec "$real" "$@"
