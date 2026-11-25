@@ -111,5 +111,20 @@ if [ -d "${SCRIPT_DIR}/.local/bin" ]; then
   done
 fi
 
+# 場所ごとにアカウント(gh / claude / aws の設定)を切り替えるラッパー。
+# ~/.local/profile-bin は実体ディレクトリとして作り、本体だけをリポジトリへリンクする。
+# 包むコマンドは本体への相対リンクにするので、リポジトリの中にはリンクを作らない。
+PROFILE_BIN_SRC="${SCRIPT_DIR}/.local/profile-bin"
+if [ -f "$PROFILE_BIN_SRC/_profile-wrapper" ]; then
+  mkdir -p "$HOME/.local/profile-bin"
+  ln -fnsv "$PROFILE_BIN_SRC/_profile-wrapper" "$HOME/.local/profile-bin/_profile-wrapper"
+  while IFS= read -r tool; do
+    case "$tool" in
+      '' | '#'*) continue ;;
+    esac
+    ln -fnsv _profile-wrapper "$HOME/.local/profile-bin/$tool"
+  done < "$PROFILE_BIN_SRC/tools"
+fi
+
 echo "End link.sh"
 echo "----------------------------------------"

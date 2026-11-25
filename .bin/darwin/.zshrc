@@ -198,3 +198,9 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# mise はフックのたびに自分のパスを PATH の先頭へ入れるので、その後でプロファイルのラッパーを先頭へ戻す
+_profile_bin_first() { path=("$HOME/.local/profile-bin" ${path:#$HOME/.local/profile-bin}) }
+_profile_bin_first
+precmd_functions+=(_profile_bin_first)
+chpwd_functions+=(_profile_bin_first)

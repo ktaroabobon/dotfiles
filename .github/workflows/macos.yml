@@ -87,6 +87,11 @@ jobs:
       if: always()
       run: test/darwin/verify_links.sh
 
+    - name: Check profile wrapper
+      if: always()
+      # ラッパーは /bin/sh(macOS では bash 3.2)で動くため、macOS で振る舞いを確かめる
+      run: test/profile_wrapper_test.sh
+
     - name: Check the repository is left clean
       if: always()
       # link.sh / cobalt2.sh はホーム側のファイルを書き換えるが、link 後の
@@ -160,6 +165,10 @@ jobs:
     - name: Load .zprofile
       if: always()
       run: test/darwin/load_rc.sh .zprofile
+
+    - name: Load .zshenv
+      if: always()
+      run: test/darwin/load_rc.sh .zshenv
 
     - name: Summary
       if: always()

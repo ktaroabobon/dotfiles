@@ -102,9 +102,22 @@ for f in "$DARWIN_DIR/.local/bin"/*; do
 done
 
 echo
+echo "--- ~/.local/profile-bin ---"
+PROFILE_BIN_SRC="$DARWIN_DIR/.local/profile-bin"
+if [ -f "$PROFILE_BIN_SRC/_profile-wrapper" ]; then
+  check "$HOME/.local/profile-bin/_profile-wrapper" "$PROFILE_BIN_SRC/_profile-wrapper"
+  while IFS= read -r tool; do
+    case "$tool" in
+      '' | '#'*) continue ;;
+    esac
+    check "$HOME/.local/profile-bin/$tool" "_profile-wrapper"
+  done < "$PROFILE_BIN_SRC/tools"
+fi
+
+echo
 echo "--- リンク切れの総ざらい ---"
 # リポジトリ側のファイル名を変えたとき、無音で壊れるのを防ぐ
-dangling=$(find "$HOME/.zsh" "$HOME/.claude" "$HOME/.codex" \
+dangling=$(find "$HOME/.zsh" "$HOME/.claude" "$HOME/.codex" "$HOME/.local/profile-bin" \
   -maxdepth 2 -type l ! -exec test -e {} \; -print 2>/dev/null)
 if [ -n "$dangling" ]; then
   echo "❌ リンク切れがあります:"

@@ -138,7 +138,67 @@ make brew-drift-uninstall   # 解除
 
 検出は `brew bundle dump` と Brewfile の突き合わせで行うため、tap 付きのパッケージは Brewfile 側も `cask "stablyai/orca/orca"` のようにフルネームで書いてください。
 
-#### 4. 個別実行（トラブルシューティング用）
+#### 4. Claude デスクトップアプリを複数アカウントで使う
+
+Claude デスクトップアプリは、1 つのデータフォルダに 1 つのログイン状態しか保持しません。ランチャーは起動時に `--user-data-dir` でデータフォルダを分けるので、別のアカウントでログインしたアプリを同時に開けます。この方法は Anthropic が提供している機能ではないため、アプリの更新で使えなくなる可能性があります。
+
+```sh
+make claude-launcher
+```
+
+- `~/Applications/Claude Launcher.app` が作られます。起動すると、どのアカウントで開くかを選ぶ画面が出ます。起動中のアカウントには「(起動中)」と表示されます。
+- 選んだアカウントのアプリがすでに起動していれば、新しく起動せずにそのウィンドウを前面に出します。初回はこの操作のために「System Events」の操作の許可を求められるので、許可してください。
+- アカウントの追加・編集・削除は、選択画面の右上の歯車から開く設定画面で行います。右上の「+」で追加し、「−」で選んだアカウントを一覧から外し、行のダブルクリックで編集します。一覧から外しても、データフォルダと会話履歴は削除されません。
+- ランチャーのアイコンは、インストール済みの `/Applications/Claude.app` から作成時と起動時に読み込みます。このリポジトリには Claude のアイコンを含めていません。
+
+アカウントごとに設定する項目は次の 4 つです。空欄の項目は既定の場所を使います。
+
+| 項目 | 内容 | 空欄のとき |
+| --- | --- | --- |
+| 表示名 | 選択画面のボタンに出る名前です。 | 空欄にはできません。 |
+| データフォルダ名 | ログイン状態の保存先です。`~/Library/Application Support/` の下の名前を書きます。 | `Claude` を使います。 |
+| 会話履歴のフォルダ | Code タブの会話履歴と設定の保存先です。`CLAUDE_CONFIG_DIR` として渡します。 | `~/.claude` を使います。 |
+| GitHub CLI の設定フォルダ | Code タブから実行する `gh` の認証情報の保存先です。`GH_CONFIG_DIR` として渡します。 | `~/.config/gh` を使います。 |
+
+- アカウントの一覧は `~/Library/Application Support/Claude Launcher/accounts.plist` に保存されます。アカウント名やフォルダをこのリポジトリに含めないため、手元だけに置いています。
+- 会話履歴のフォルダは、ターミナルで `claude` を実行するときの `CLAUDE_CONFIG_DIR` と同じ場所にしてください。違う場所にすると、ターミナルで始めた会話をデスクトップアプリで開けません。
+- Dock から起動したアプリはシェルの環境変数を引き継ぎません。そのため、会話履歴などの場所はランチャーが起動時に明示的に渡します。設定の変更は、そのアカウントのアプリを次に起動したときから適用されます。
+- 2 つのアプリで同じアカウントにログインしないでください。Projects が読み込めなくなったという報告があります。
+
+#### 5. フォルダごとにアカウントを切り替える
+
+`~/workspace/<仕事>/` の下でだけ、git・`gh`・`claude`・`aws` などを仕事用のアカウントで動かします。境目は git の `includeIf` の 1 か所にだけ書き、`gh` などはラッパーが同じ境目を見て切り替えます。
+
+| 何を | どこで |
+| --- | --- |
+| 境目 | `~/.config/git/local` の `[includeIf "gitdir:~/workspace/<仕事>/"]`(`.gitconfig` から読む) |
+| git の名前・メール・SSH 鍵 | include 先(例: `~/.config/git/config-<仕事>`)の `[user]` と `[core] sshCommand` |
+| `gh` などに渡す環境変数 | 同じ include 先の `[profile] env = KEY=値`(1 行に 1 つ) |
+| 包むコマンドの一覧 | [.bin/darwin/.local/profile-bin/tools](.bin/darwin/.local/profile-bin/tools) |
+| 切り替えの処理 | [.bin/darwin/.local/profile-bin/_profile-wrapper](.bin/darwin/.local/profile-bin/_profile-wrapper) |
+
+`~/.config/git/local` と include 先は、仕事用のメールアドレスやアカウント名を含むので、このリポジトリに入れず手元にだけ置きます。include 先の例:
+
+```ini
+[user]
+    name = <仕事用の GitHub アカウント>
+    email = <仕事用のメールアドレス>
+    useConfigOnly = true
+[core]
+    sshCommand = ssh -i ~/.ssh/id_ed25519_<仕事> -o IdentitiesOnly=yes
+[profile]
+    env = GH_CONFIG_DIR=~/.config/gh-<仕事>
+    env = CLAUDE_CONFIG_DIR=~/.claude-<仕事>
+    env = AWS_PROFILE=<仕事用の AWS プロファイル>
+```
+
+- `make link` で `~/.local/profile-bin/` に本体と、一覧の各コマンドへのリンクが作られます。コマンドを足したら一覧に書いて `make link` を実行し直してください。
+- ラッパーは実行した場所で判定するので、mise や direnv と違ってシェルが `cd` を検知しなくても切り替わります(Claude Code の Bash ツール、スクリプトの中の `cd`、リポジトリの外の `gh repo clone` など)。
+- 親から受け継いだ値は、ラッパーが前回設定したものなら決め直し、違う値なら利用者が明示したものとして残します。`AWS_PROFILE=<stg> aws ...` のように明示すれば、その値が使われます。Claude Launcher が渡す `CLAUDE_CONFIG_DIR` / `GH_CONFIG_DIR` も明示した値として扱われます。
+- 包んでいないコマンド(`python` を直接実行するなど)には渡りません。
+- `gh` の認証は、`GH_CONFIG_DIR` を指定してから `gh auth login` すると、そのフォルダに保存されます。
+
+#### 6. 個別実行（トラブルシューティング用）
 
 必要に応じて、個別のコマンドを実行できます：
 
@@ -155,6 +215,21 @@ make link
 # システム設定のみ（Cobalt2 テーマ含む）
 make defaults
 ```
+
+#### 7. MX Ergo Sの左右チルトをログイン後に復旧
+
+`KeitaronoMacBook-Pro`では、ログイン直後にMosがLogitech HID++のボタン入力を受け取れず、MX Ergo Sの左右チルトが効かない場合があります。次のコマンドで、ログイン後にMosを再起動して設定画面をバックグラウンド表示するLaunchAgentを登録できます。
+
+```sh
+make mos-refresh-install
+```
+
+```sh
+make mos-refresh-status      # 登録状態を確認
+make mos-refresh-uninstall   # 登録を解除
+```
+
+実行スクリプト自身もLocalHostNameを確認するため、ほかのMacでは動作しません。ログは`~/Library/Logs/mos-startup-refresh.log`に出力されます。
 
 ### Ubuntu / WSL2
 
