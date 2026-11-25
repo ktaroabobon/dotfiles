@@ -105,7 +105,10 @@ echo
 echo "--- ~/.local/profile-bin ---"
 PROFILE_BIN_SRC="$DARWIN_DIR/.local/profile-bin"
 if [ -f "$PROFILE_BIN_SRC/_profile-wrapper" ]; then
-  check "$HOME/.local/profile-bin/_profile-wrapper" "$PROFILE_BIN_SRC/_profile-wrapper"
+  for f in "$PROFILE_BIN_SRC"/_*; do
+    [ -f "$f" ] || continue
+    check "$HOME/.local/profile-bin/$(basename "$f")" "$f"
+  done
   while IFS= read -r tool; do
     case "$tool" in
       '' | '#'*) continue ;;
