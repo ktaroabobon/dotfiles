@@ -13,7 +13,7 @@ SCRIPT_DIR=$(
 )
 
 # ホーム直下にリンクするドットファイル/ドットディレクトリ。
-# .claude / .codex は実マシン側に動的データ (sessions/, history.jsonl, sqlite 等) を
+# .claude / .codex / .gemini は実マシン側に動的データ (sessions/, history.jsonl, sqlite, 認証情報 等) を
 # 持つため、ここではディレクトリ単位でリンクせず、後段で個別リンクする。
 # .zsh も同様に個別リンクする（理由は下記）。
 # .local はほかのアプリの実データも入るため、管理対象のファイルだけを後段で個別リンクする。
@@ -22,6 +22,7 @@ for dotfile in "${SCRIPT_DIR}"/.??*; do
   [[ "$dotfile" == "${SCRIPT_DIR}/.DS_Store" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.claude" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.codex" ]] && continue
+  [[ "$dotfile" == "${SCRIPT_DIR}/.gemini" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.zsh" ]] && continue
   [[ "$dotfile" == "${SCRIPT_DIR}/.local" ]] && continue
 
@@ -99,8 +100,20 @@ if [ -d "$CODEX_SRC" ]; then
   done
 fi
 
+# Gemini CLI の設定の個別リンク。$HOME/.gemini/ は認証情報を持つ実体ディレクトリのまま残す。
+# GEMINI.md は Claude Code の CLAUDE.md と同じ原則を指す。手元で書いた実ファイルは上書きしない
+GEMINI_SRC="${SCRIPT_DIR}/.gemini"
+if [ -d "$GEMINI_SRC" ]; then
+  mkdir -p "$HOME/.gemini"
+  if [ -e "$HOME/.gemini/GEMINI.md" ] && [ ! -L "$HOME/.gemini/GEMINI.md" ]; then
+    echo "~/.gemini/GEMINI.md が実ファイルなのでリンクしません。中身を .bin/darwin/.claude/CLAUDE.md へ移してから消してください"
+  else
+    ln -fnsv "$GEMINI_SRC/GEMINI.md" "$HOME/.gemini/GEMINI.md"
+  fi
+fi
+
 # リポジトリから消したファイルを指していたリンクを片付ける（リンク切れを残さない）。
-find "$HOME/.claude" "$HOME/.codex" -maxdepth 2 -type l -lname "${SCRIPT_DIR}/*" ! -exec test -e {} \; -delete 2>/dev/null || true
+find "$HOME/.claude" "$HOME/.codex" "$HOME/.gemini" -maxdepth 2 -type l -lname "${SCRIPT_DIR}/*" ! -exec test -e {} \; -delete 2>/dev/null || true
 
 # 場所ごとにアカウント(gh / claude / aws の設定)を切り替えるラッパー。
 # ~/.local/profile-bin は実体ディレクトリとして作り、本体とコマンドごとの後処理(_ で始まる

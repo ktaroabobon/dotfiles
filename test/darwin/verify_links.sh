@@ -43,11 +43,11 @@ check() {
 }
 
 echo "--- ホーム直下のドットファイル ---"
-# .claude / .codex / .zsh / .local はディレクトリごとではなく中身を個別にリンクする
+# .claude / .codex / .gemini / .zsh / .local はディレクトリごとではなく中身を個別にリンクする
 for f in "$DARWIN_DIR"/.??*; do
   base=$(basename "$f")
   case "$base" in
-    .git | .DS_Store | .claude | .codex | .zsh | .local) continue ;;
+    .git | .DS_Store | .claude | .codex | .gemini | .zsh | .local) continue ;;
   esac
   check "$HOME/$base" "$f"
 done
@@ -90,6 +90,12 @@ for f in "$DARWIN_DIR/.codex/rules"/*; do
 done
 
 echo
+echo "--- ~/.gemini ---"
+if [ -e "$DARWIN_DIR/.gemini/GEMINI.md" ]; then
+  check "$HOME/.gemini/GEMINI.md" "$DARWIN_DIR/.gemini/GEMINI.md"
+fi
+
+echo
 echo "--- ~/.local/profile-bin ---"
 PROFILE_BIN_SRC="$DARWIN_DIR/.local/profile-bin"
 if [ -f "$PROFILE_BIN_SRC/_profile-wrapper" ]; then
@@ -108,7 +114,7 @@ fi
 echo
 echo "--- リンク切れの総ざらい ---"
 # リポジトリ側のファイル名を変えたとき、無音で壊れるのを防ぐ
-dangling=$(find "$HOME/.zsh" "$HOME/.claude" "$HOME/.codex" "$HOME/.local/profile-bin" \
+dangling=$(find "$HOME/.zsh" "$HOME/.claude" "$HOME/.codex" "$HOME/.gemini" "$HOME/.local/profile-bin" \
   -maxdepth 2 -type l ! -exec test -e {} \; -print 2>/dev/null)
 if [ -n "$dangling" ]; then
   echo "❌ リンク切れがあります:"
