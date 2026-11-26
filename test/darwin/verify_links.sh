@@ -61,7 +61,7 @@ done
 
 echo
 echo "--- ~/.claude ---"
-for f in CLAUDE.md RTK.md settings.json keybindings.json; do
+for f in CLAUDE.md settings.json keybindings.json; do
   [ -f "$DARWIN_DIR/.claude/$f" ] || continue
   check "$HOME/.claude/$f" "$DARWIN_DIR/.claude/$f"
 done
@@ -80,6 +80,9 @@ echo
 echo "--- ~/.codex ---"
 if [ -f "$DARWIN_DIR/.codex/config.toml" ]; then
   check "$HOME/.codex/config.toml" "$DARWIN_DIR/.codex/config.toml"
+fi
+if [ -e "$DARWIN_DIR/.codex/AGENTS.md" ]; then
+  check "$HOME/.codex/AGENTS.md" "$DARWIN_DIR/.codex/AGENTS.md"
 fi
 for f in "$DARWIN_DIR/.codex/rules"/*; do
   [ -e "$f" ] || continue

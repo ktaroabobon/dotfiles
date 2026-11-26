@@ -73,7 +73,7 @@ source ~/.zshrc
 
 `make link`（または `make all`）実行時に、`.bin/darwin/.claude/` 配下の管理対象ファイルが `$HOME/.claude/` に個別シンボリックリンクとして配置されます。
 
-- `CLAUDE.md` / `RTK.md` / `settings.json` / `keybindings.json`
+- `CLAUDE.md`（全リポジトリに効く共通の原則。Codex の `AGENTS.md` も同じファイルを指す） / `settings.json` / `keybindings.json`
 - `commands/`（ユーザー定義スラッシュコマンド）
 - `hooks/`（RTK rewrite hook など）
 - `skills/`（Kiro 系スキル、`create-issue` などのユーザースキル）
@@ -85,6 +85,7 @@ source ~/.zshrc
 `make link` 実行時に、`.bin/darwin/.codex/` 配下の管理対象ファイルが `$HOME/.codex/` に個別シンボリックリンクとして配置されます。
 
 - `config.toml`（モデル/承認/プロジェクト trust_level 等の設定）
+- `AGENTS.md`（`.claude/CLAUDE.md` への symlink。手元に実ファイルがあるときはリンクしない）
 - `rules/default.rules`（承認ルール集）
 
 `auth.json` などの認証情報、`sessions/`、`history.jsonl`、`logs_*.sqlite`、`state_*.sqlite`、`automations/` などの動的データやマシン固有データはリポジトリの管理対象外です。

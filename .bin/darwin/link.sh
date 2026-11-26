@@ -53,7 +53,7 @@ if [ -d "$CLAUDE_SRC" ]; then
   mkdir -p "$HOME/.claude/commands" "$HOME/.claude/hooks" "$HOME/.claude/skills"
 
   # ルート直下のファイル
-  for f in CLAUDE.md RTK.md settings.json keybindings.json; do
+  for f in CLAUDE.md settings.json keybindings.json; do
     [ -f "$CLAUDE_SRC/$f" ] && ln -fnsv "$CLAUDE_SRC/$f" "$HOME/.claude/$f"
   done
 
@@ -86,11 +86,21 @@ if [ -d "$CODEX_SRC" ]; then
     [ -f "$CODEX_SRC/$f" ] && ln -fnsv "$CODEX_SRC/$f" "$HOME/.codex/$f"
   done
 
+  # AGENTS.md は Claude Code の CLAUDE.md と同じ原則を指す。手元で書いた実ファイルは上書きしない
+  if [ -e "$HOME/.codex/AGENTS.md" ] && [ ! -L "$HOME/.codex/AGENTS.md" ]; then
+    echo "~/.codex/AGENTS.md が実ファイルなのでリンクしません。中身を .bin/darwin/.claude/CLAUDE.md へ移してから消してください"
+  else
+    ln -fnsv "$CODEX_SRC/AGENTS.md" "$HOME/.codex/AGENTS.md"
+  fi
+
   # rules/ 配下のファイル
   for rule in "$CODEX_SRC/rules"/*; do
     [ -e "$rule" ] && ln -fnsv "$rule" "$HOME/.codex/rules/$(basename "$rule")"
   done
 fi
+
+# リポジトリから消したファイルを指していたリンクを片付ける（リンク切れを残さない）。
+find "$HOME/.claude" "$HOME/.codex" -maxdepth 2 -type l -lname "${SCRIPT_DIR}/*" ! -exec test -e {} \; -delete 2>/dev/null || true
 
 # 場所ごとにアカウント(gh / claude / aws の設定)を切り替えるラッパー。
 # ~/.local/profile-bin は実体ディレクトリとして作り、本体とコマンドごとの後処理(_ で始まる
