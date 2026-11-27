@@ -58,8 +58,9 @@ if [ -d "$CLAUDE_SRC" ]; then
     [ -f "$CLAUDE_SRC/$f" ] && ln -fnsv "$CLAUDE_SRC/$f" "$HOME/.claude/$f"
   done
 
-  # commands/ 配下のファイル
-  for cmd in "$CLAUDE_SRC/commands"/*; do
+  # commands/ 配下のファイル。commands/ と skills/ は空のこともあるので、(N) で一致なしを空にする
+  # （zsh は一致しない glob をエラーにして止まる）
+  for cmd in "$CLAUDE_SRC/commands"/*(N); do
     [ -e "$cmd" ] && ln -fnsv "$cmd" "$HOME/.claude/commands/$(basename "$cmd")"
   done
 
@@ -69,9 +70,9 @@ if [ -d "$CLAUDE_SRC" ]; then
   done
 
   # skills/ 配下のディレクトリ単位リンク
-  for skill in "$CLAUDE_SRC/skills"/*/; do
+  for skill in "$CLAUDE_SRC/skills"/*(N/); do
     skill_name=$(basename "$skill")
-    ln -fnsv "${skill%/}" "$HOME/.claude/skills/$skill_name"
+    ln -fnsv "$skill" "$HOME/.claude/skills/$skill_name"
   done
 fi
 

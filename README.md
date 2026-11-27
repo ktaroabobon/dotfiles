@@ -74,9 +74,9 @@ source ~/.zshrc
 `make link`（または `make all`）実行時に、`.bin/darwin/.claude/` 配下の管理対象ファイルが `$HOME/.claude/` に個別シンボリックリンクとして配置されます。
 
 - `CLAUDE.md`（全リポジトリに効く共通の原則。Codex の `AGENTS.md` と Gemini CLI の `GEMINI.md` も同じファイルを指す） / `settings.json` / `keybindings.json`
-- `commands/`（ユーザー定義スラッシュコマンド）
+- `commands/`（ユーザー定義スラッシュコマンド。今は置いていない）
 - `hooks/`（RTK rewrite hook など）
-- `skills/`（Kiro 系スキル、`create-issue` などのユーザースキル）
+- `skills/`（全リポジトリで使うユーザースキル。今は置いていない。特定のプロジェクト専用のものは、そのリポジトリの `.claude/skills/` に置く）
 
 `$HOME/.claude/` ディレクトリ自体は実体のまま残り、`sessions/` や `projects/`、`history.jsonl` などの動的データはリポジトリの管理対象外です。
 
