@@ -70,6 +70,7 @@ if [ -d "$CLAUDE_SRC" ]; then
 
   # skills/ 配下のディレクトリ単位リンク
   for skill in "$CLAUDE_SRC/skills"/*/; do
+    [ -d "$skill" ] || continue
     skill_name=$(basename "$skill")
     ln -fnsv "${skill%/}" "$HOME/.claude/skills/$skill_name"
   done
